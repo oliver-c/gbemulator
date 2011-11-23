@@ -5,6 +5,7 @@
 #include "GB.h"
 #include "CPU.h"
 #include "MMU.h"
+#include "Cartridge.h"
 #include "GUI.h"
 
 #include "types.h"
@@ -14,6 +15,8 @@ struct GB {
 
    CPU cpu;
    MMU mmu;
+
+   Cartridge cartridge;
 
    GUI gui;
 };
@@ -28,25 +31,17 @@ GB GB_init () {
 
    newGB->cpu = CPU_init (newGB);
    newGB->mmu = MMU_init (newGB);
+   newGB->cartridge = Cartridge_init (newGB);
    newGB->gui = GUI_init (newGB);
 
-   GB_runBootSequence (newGB);
    newGB->isRunning = FALSE;
+   GB_runBootSequence (newGB);
 
    return newGB;
 }
 
 void GB_loadRom (GB gb, const char *location) {
-   FILE *input;
    
-   input = fopen (location, "rb"); 
-
-   if (input == NULL) {
-      fprintf (stderr, "Unable to open ROM: %s\n", location);    
-   } else {
-            
-      fclose (input);
-   }
 }
 
 void GB_run (GB gb) {
@@ -70,6 +65,7 @@ void GB_free (GB gb) {
 
    CPU_free (gb->cpu);
    MMU_free (gb->mmu);
+   Cartridge_free (gb->cartridge);
    GUI_free (gb->gui);
 
    free (gb);

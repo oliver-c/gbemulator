@@ -34,9 +34,13 @@ Echo of 8kB Internal RAM
 #include "MMU_type.h"
 #include "types.h"
 
+#define MAPPED_MEM_SIZE 0x10000
+
+/* Constructor and Destructor */
 MMU MMU_init (GB gb);
 void MMU_free (MMU mmu);
 
+/* Writes and reads bytes */
 byte MMU_readByte (MMU mmu, int location);
 void MMU_writeByte (MMU mmu, int location, byte byteToWrite);
 
