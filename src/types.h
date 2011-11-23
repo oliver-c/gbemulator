@@ -6,5 +6,6 @@
 
 typedef char bool;
 typedef unsigned char byte;
+typedef unsigned short word;
 
 #endif
