@@ -117,10 +117,6 @@ void GB_runBootSequence (GB gb) {
    MMU_writeByte (gb->mmu, 0xFFFF, 0x00);
 }
 
-Cartridge GB_getCartridge (GB gb) {
-   return (gb->cartridge);
-}
-
 CPU GB_getCPU (GB gb) {
    return (gb->cpu);
 }

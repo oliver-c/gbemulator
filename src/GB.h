@@ -16,7 +16,6 @@ void GB_free (GB gb);
 
 void GB_setRunning (GB gb, bool running);
 
-Cartridge GB_getCartridge (GB gb);
 CPU GB_getCPU (GB gb);
 MMU GB_getMMU (GB gb);
 Cartridge GB_getCartridge (GB gb);
