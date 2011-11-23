@@ -4,6 +4,8 @@
 #include "GB_type.h"
 #include "Cartridge_type.h"
 
+#define ROM_BANK_SIZE 16384
+
 typedef enum MBC {
    MBC_NONE,
    MBC_1,
@@ -17,5 +19,8 @@ void Cartridge_free (Cartridge cartridge);
 
 /* Loads a cartridge */
 void Cartridge_load (Cartridge cartridge, const char *location);
+
+/* Get cartridge data at a specified bank number */
+byte * Cartridge_getData (Cartridge cartridge, int bankNumber);
 
 #endif

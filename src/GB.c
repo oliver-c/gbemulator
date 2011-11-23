@@ -41,7 +41,7 @@ GB GB_init () {
 }
 
 void GB_loadRom (GB gb, const char *location) {
-   
+   Cartridge_load (gb->cartridge, location);   
 }
 
 void GB_run (GB gb) {
@@ -116,3 +116,24 @@ void GB_runBootSequence (GB gb) {
    MMU_writeByte (gb->mmu, 0xFF4B, 0x00);
    MMU_writeByte (gb->mmu, 0xFFFF, 0x00);
 }
+
+Cartridge GB_getCartridge (GB gb) {
+   return (gb->cartridge);
+}
+
+CPU GB_getCPU (GB gb) {
+   return (gb->cpu);
+}
+
+MMU GB_getMMU (GB gb) {
+   return (gb->mmu);
+}
+
+Cartridge GB_getCartridge (GB gb) {
+   return (gb->cartridge);
+}
+
+GUI GB_getGUI (GB gb) {
+   return (gb->gui);
+}
+

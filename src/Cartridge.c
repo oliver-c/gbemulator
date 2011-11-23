@@ -91,3 +91,8 @@ void Cartridge_load (Cartridge cartridge, const char *location) {
    }
 }
 
+byte * Cartridge_getData (Cartridge cartridge, int bankNumber) {
+   /* Return a pointer to the data at the beginning of the specified
+      bank */
+   return (cartridge->data + bankNumber * ROM_BANK_SIZE); 
+}
