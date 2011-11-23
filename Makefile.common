@@ -1,0 +1,5 @@
+SRC_DIR = src
+EXECUTABLE_NAME = gbemu
+
+CSRC = main.c GB.c CPU.c MMU.c GUI.c
+OBJS = $(CSRC:.c=.o)
