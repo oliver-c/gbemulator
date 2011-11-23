@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <assert.h>
+
+#include <SDL.h>
+
 #include "GB.h"
 
 void viewUsage (const char *name);
