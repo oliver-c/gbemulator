@@ -21,6 +21,7 @@ Cartridge Cartridge_init (GB gb) {
 
    newCartridge->gb = gb;
    newCartridge->loaded = FALSE;
+   newCartridge->data = NULL;
 
    return newCartridge;
 }
@@ -94,5 +95,6 @@ void Cartridge_load (Cartridge cartridge, const char *location) {
 byte * Cartridge_getData (Cartridge cartridge, int bankNumber) {
    /* Return a pointer to the data at the beginning of the specified
       bank */
+   assert (cartridge->loaded);
    return (cartridge->data + bankNumber * ROM_BANK_SIZE); 
 }

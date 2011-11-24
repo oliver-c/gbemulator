@@ -10,12 +10,12 @@
 struct CPU {
    GB gb;
 
+   bool IME;
    reg registers[NUM_REGISTERS];
 };
 
-/* Instruction map */
-typedef int (*instructionFunction)(CPU);
-instructionFunction instructionMap[0x100] = {NULL};
+/* An array of pointers to the functions that will execute the CPU instructions */
+int (*instructionMap[0x100])(CPU) = {NULL};
 
 void CPU_initInstructionMap (void);
 
@@ -24,6 +24,11 @@ CPU CPU_init (GB gb) {
    assert (newCPU != NULL);
 
    newCPU->gb = gb;
+
+   /* Not sure about this one */
+   newCPU->IME = FALSE;
+
+   /* Set up an array of function pointers with opcodes as indices */
    CPU_initInstructionMap ();
 
    return newCPU;
@@ -120,9 +125,62 @@ int CPU_step (CPU cpu) {
    opcode = MMU_readByte (mmu, cpu->registers[PC].value);
 
    /* Execute the instruction */
-   numCycles = instructionMap[opcode] (cpu);
+   if (instructionMap[opcode] != NULL) {
+      numCycles = instructionMap[opcode] (cpu);
+   } else {
+      fprintf (stderr, "ERROR: Opcode %x is not implemented\n", opcode);
+   }
 
    return numCycles;
+}
+
+void CPU_setIME (CPU cpu, bool enabled) {
+   cpu->IME = enabled;
+}
+
+bool CPU_getIME (CPU cpu) {
+   return (cpu->IME);
+}
+
+int CPU_executeInterrupt (CPU cpu, interrupt type) {
+   MMU mmu;
+   int cycles = 0;
+
+   mmu = GB_getMMU (cpu->gb);
+
+   /* Reset the IME flag */
+   cpu->IME = FALSE;
+
+   /* TODO: Replace below code with the instruction functions 
+            (e.g. CPU_jmp) once they're implemented */
+
+   /* Push the current program counter onto the stack */
+   cpu->registers[SP].value -= 2;   
+   MMU_writeWord (mmu, cpu->registers[SP].value, cpu->registers[PC].value);
+
+   /* Jump to starting address of interrupt */
+   switch (type) {
+      case INT_VBLANK:
+         cpu->registers[PC].value = 0x40;
+         break;
+      case INT_LCDSTAT:
+         cpu->registers[PC].value = 0x48;
+         break;
+      case INT_TIMER:
+         cpu->registers[PC].value = 0x50;
+         break;
+      case INT_SERIAL:
+         cpu->registers[PC].value = 0x58;
+         break;
+      case INT_JOYPAD:
+         cpu->registers[PC].value = 0x60;
+         break;
+   }
+
+   /* Cycles used by the push and the jump */
+   cycles = 16+12;
+
+   return cycles;
 }
 
 void CPU_initInstructionMap () {

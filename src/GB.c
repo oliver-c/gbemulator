@@ -24,6 +24,8 @@ struct GB {
 /* Runs the start up sequence for the gameboy */
 void GB_runBootSequence (GB gb);
 
+/* Checks for any interrupts and handles them, returns the number of cycles used */
+int GB_handleInterrupts (GB gb);
 
 GB GB_init () {
    GB newGB = (GB)malloc(sizeof(struct GB));
@@ -57,6 +59,7 @@ void GB_run (GB gb) {
       }
 
       GUI_handleEvents (gb->gui);
+      cyclesSoFar += GB_handleInterrupts (gb);
    }
 }
 
@@ -73,6 +76,22 @@ void GB_free (GB gb) {
 
 void GB_setRunning (GB gb, bool running) {
    gb->isRunning = running;
+}
+
+CPU GB_getCPU (GB gb) {
+   return (gb->cpu);
+}
+
+MMU GB_getMMU (GB gb) {
+   return (gb->mmu);
+}
+
+Cartridge GB_getCartridge (GB gb) {
+   return (gb->cartridge);
+}
+
+GUI GB_getGUI (GB gb) {
+   return (gb->gui);
 }
 
 void GB_runBootSequence (GB gb) {
@@ -118,19 +137,33 @@ void GB_runBootSequence (GB gb) {
    MMU_writeByte (gb->mmu, 0xFFFF, 0x00);
 }
 
-CPU GB_getCPU (GB gb) {
-   return (gb->cpu);
-}
+int GB_handleInterrupts (GB gb) {
+   int cycles = 0;
+   byte IERegister; /* Tells us which interrupts are enabled */
+   byte IFRegister; /* Tells us which interrupts have been requested */
 
-MMU GB_getMMU (GB gb) {
-   return (gb->mmu);
-}
+   IERegister = MMU_readByte (gb->mmu, 0xFFFF);
+   IFRegister = MMU_readByte (gb->mmu, 0xFF0F);
 
-Cartridge GB_getCartridge (GB gb) {
-   return (gb->cartridge);
-}
+   /* If the Interrupt Master Enable flag is set */
+   if (CPU_getIME(gb->cpu)) {
+      if ((IERegister & 1) && (IFRegister & 1)) {
+         /* V-Blank */
+         cycles = CPU_executeInterrupt (gb->cpu, INT_VBLANK);
+      } else if ((IERegister & 2) && (IFRegister & 2)) {
+         /* LCD STAT */
+         cycles = CPU_executeInterrupt (gb->cpu, INT_LCDSTAT);
+      } else if ((IERegister & 4) && (IFRegister & 4)) {
+         /* Timer */
+         cycles = CPU_executeInterrupt (gb->cpu, INT_TIMER);
+      } else if ((IERegister & 8) && (IFRegister & 8)) {
+         /* Serial */
+         cycles = CPU_executeInterrupt (gb->cpu, INT_SERIAL);
+      } else if ((IERegister & 16) && (IFRegister & 16)) {
+         /* Joypad */
+         cycles = CPU_executeInterrupt (gb->cpu, INT_JOYPAD);
+      }
+   }
 
-GUI GB_getGUI (GB gb) {
-   return (gb->gui);
+   return cycles;
 }
-

@@ -69,3 +69,21 @@ void MMU_writeByte (MMU mmu, int location, byte byteToWrite) {
       mmu->memory[location] = byteToWrite;
    }
 }
+
+word MMU_readWord (MMU mmu, int location) {
+   word value;
+   value = (MMU_readByte(mmu, location)) & (MMU_readByte(mmu, location+1) << 8);
+
+   return value;
+}
+
+void MMU_writeWord (MMU mmu, int location, word wordToWrite) {
+   byte MSB, LSB; 
+   
+   LSB = (wordToWrite & 0xFF);
+   wordToWrite >>= 8;
+   MSB = (wordToWrite & 0xFF);
+
+   MMU_writeByte (mmu, location, LSB);
+   MMU_writeByte (mmu, location+1, MSB);
+}
