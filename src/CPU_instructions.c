@@ -98,4 +98,53 @@ int CPU_LD_A_L (CPU cpu) {
    return 4;
 }
 
+int CPU_LD_A_aHL (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   cpu->registers[AF].bytes.high = MMU_readByte (mmu, cpu->registers[HL].value);
+   cpu->registers[PC].value++;
+   return 8;
+}
+
+int CPU_LD_B_B (CPU cpu) {
+   cpu->registers[PC].value++;
+   return 4;
+}
+
+int CPU_LD_B_C (CPU cpu) {
+   cpu->registers[BC].bytes.high = cpu->registers[BC].bytes.low;
+   cpu->registers[PC].value++;
+   return 4;
+}
+
+int CPU_LD_B_D (CPU cpu) {
+   cpu->registers[BC].bytes.high = cpu->registers[DE].bytes.high;
+   cpu->registers[PC].value++;
+   return 4;
+}
+
+int CPU_LD_B_E (CPU cpu) {
+   cpu->registers[BC].bytes.high = cpu->registers[DE].bytes.low;
+   cpu->registers[PC].value++;
+   return 4;
+
+}
+
+int CPU_LD_B_H (CPU cpu) {
+   cpu->registers[BC].bytes.high = cpu->registers[HL].bytes.high;
+   cpu->registers[PC].value++;
+   return 4;
+}
+
+int CPU_LD_B_L (CPU cpu) {
+   cpu->registers[BC].bytes.high = cpu->registers[HL].bytes.low;
+   cpu->registers[PC].value++;
+   return 4;
+}
+
+int CPU_LD_B_aHL (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   cpu->registers[BC].bytes.high = MMU_readByte (mmu, cpu->registers[HL].value);
+   cpu->registers[PC].value++;
+   return 4;
+}
 
