@@ -66,7 +66,8 @@ void CPU_setIME (CPU cpu, bool enabled);
 /* Gets the IME flag */
 bool CPU_getIME (CPU cpu);
 
-/* Executes the interrupt */
+/* Executes the interrupt, returning the number of cycles it took 
+   to start the interrupt */
 int CPU_executeInterrupt (CPU cpu, interrupt type);
 
 #endif
