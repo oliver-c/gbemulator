@@ -3,6 +3,7 @@
 
 #include "GB_type.h"
 #include "CPU_type.h"
+#include "types.h"
 
 #define NUM_REGISTERS 6
 #define CLOCK_SPEED 4194304

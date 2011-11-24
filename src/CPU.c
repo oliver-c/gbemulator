@@ -1,8 +1,11 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
 #include "GB.h"
 #include "CPU.h"
+#include "CPU_instructions.h"
+#include "MMU.h"
 
 struct CPU {
    GB gb;
@@ -10,21 +13,24 @@ struct CPU {
    reg registers[NUM_REGISTERS];
 };
 
+/* Instruction map */
+typedef int (*instructionFunction)(CPU);
+instructionFunction instructionMap[0x100] = {NULL};
+
+void CPU_initInstructionMap (void);
+
 CPU CPU_init (GB gb) {
    CPU newCPU = (CPU)malloc(sizeof(struct CPU));
    assert (newCPU != NULL);
 
    newCPU->gb = gb;
+   CPU_initInstructionMap ();
 
    return newCPU;
 }
 
 void CPU_free (CPU cpu) {
    free (cpu);
-}
-
-int CPU_step (CPU cpu) {
-   return 0;
 }
 
 word CPU_get16bitRegisterValue (CPU cpu, Register16 r) {
@@ -103,3 +109,37 @@ void CPU_set8bitRegisterValue (CPU cpu, Register8 r, byte value) {
    }
 }
 
+int CPU_step (CPU cpu) {
+   int numCycles = 0;
+   byte opcode;
+   MMU mmu;
+
+   mmu = GB_getMMU (cpu->gb);
+   
+   /* Fetch the opcode for the next instruction to execute */
+   opcode = MMU_readByte (mmu, cpu->registers[PC].value);
+
+   /* Execute the instruction */
+   numCycles = instructionMap[opcode] (cpu);
+
+   return numCycles;
+}
+
+void CPU_initInstructionMap () {
+   instructionMap[0x00] = &CPU_NOP;
+
+   instructionMap[0x06] = &CPU_LD_B_n;
+   instructionMap[0x0E] = &CPU_LD_C_n;
+   instructionMap[0x16] = &CPU_LD_D_n;
+   instructionMap[0x1E] = &CPU_LD_E_n;
+   instructionMap[0x26] = &CPU_LD_H_n;
+   instructionMap[0x2E] = &CPU_LD_L_n;
+
+   instructionMap[0x7F] = &CPU_LD_A_A;
+   instructionMap[0x78] = &CPU_LD_A_B;
+   instructionMap[0x79] = &CPU_LD_A_C;
+   instructionMap[0x7A] = &CPU_LD_A_D;
+   instructionMap[0x7B] = &CPU_LD_A_E;
+   instructionMap[0x7C] = &CPU_LD_A_H;
+   instructionMap[0x7D] = &CPU_LD_A_L;
+}

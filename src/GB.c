@@ -82,6 +82,7 @@ void GB_runBootSequence (GB gb) {
    CPU_set16bitRegisterValue (gb->cpu, DE, 0x00D8);
    CPU_set16bitRegisterValue (gb->cpu, HL, 0x014D);
    CPU_set16bitRegisterValue (gb->cpu, SP, 0xFFFE);
+   CPU_set16bitRegisterValue (gb->cpu, PC, 0x0100);
 
    /* Initialise values in memory */
    MMU_writeByte (gb->mmu, 0xFF05, 0x00);
