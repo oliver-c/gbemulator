@@ -29,4 +29,20 @@ int CPU_LD_B_H (CPU cpu);
 int CPU_LD_B_L (CPU cpu);
 int CPU_LD_B_aHL (CPU cpu);
 
+int CPU_LD_C_B (CPU cpu);
+int CPU_LD_C_C (CPU cpu);
+int CPU_LD_C_D (CPU cpu);
+int CPU_LD_C_E (CPU cpu);
+int CPU_LD_C_H (CPU cpu);
+int CPU_LD_C_L (CPU cpu);
+int CPU_LD_C_aHL (CPU cpu);
+
+int CPU_LD_D_B (CPU cpu);
+int CPU_LD_D_C (CPU cpu);
+int CPU_LD_D_D (CPU cpu);
+int CPU_LD_D_E (CPU cpu);
+int CPU_LD_D_H (CPU cpu);
+int CPU_LD_D_L (CPU cpu);
+int CPU_LD_D_aHL (CPU cpu);
+
 #endif

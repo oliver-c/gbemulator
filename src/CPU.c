@@ -209,4 +209,20 @@ void CPU_initInstructionMap () {
    instructionMap[0x44] = &CPU_LD_B_H;
    instructionMap[0x45] = &CPU_LD_B_L;
    instructionMap[0x46] = &CPU_LD_B_aHL;
+
+   instructionMap[0x48] = &CPU_LD_C_B;
+   instructionMap[0x49] = &CPU_LD_C_C;
+   instructionMap[0x4A] = &CPU_LD_C_D;
+   instructionMap[0x4B] = &CPU_LD_C_E;
+   instructionMap[0x4C] = &CPU_LD_C_H;
+   instructionMap[0x4D] = &CPU_LD_C_L;
+   instructionMap[0x4E] = &CPU_LD_C_aHL;
+
+   instructionMap[0x50] = &CPU_LD_D_B;
+   instructionMap[0x51] = &CPU_LD_D_C;
+   instructionMap[0x52] = &CPU_LD_D_D;
+   instructionMap[0x53] = &CPU_LD_D_E;
+   instructionMap[0x54] = &CPU_LD_D_H;
+   instructionMap[0x55] = &CPU_LD_D_L;
+   instructionMap[0x56] = &CPU_LD_D_aHL;
 }
