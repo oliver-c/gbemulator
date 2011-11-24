@@ -33,17 +33,17 @@ void CPU_free (CPU cpu) {
    free (cpu);
 }
 
-word CPU_get16bitRegisterValue (CPU cpu, Register16 r) {
+word CPU_get16bitRegisterValue (CPU cpu, register16 r) {
    assert (0 <= r && r < NUM_REGISTERS);
    return cpu->registers[r].value;
 }
 
-void CPU_set16bitRegisterValue (CPU cpu, Register16 r, word value) {
+void CPU_set16bitRegisterValue (CPU cpu, register16 r, word value) {
    assert (0 <= r && r < NUM_REGISTERS);
    cpu->registers[r].value = value;
 }
 
-byte CPU_get8bitRegisterValue (CPU cpu, Register8 r) {
+byte CPU_get8bitRegisterValue (CPU cpu, register8 r) {
    byte value = 0;
 
    switch (r) {
@@ -78,7 +78,7 @@ byte CPU_get8bitRegisterValue (CPU cpu, Register8 r) {
    return value;
 }
 
-void CPU_set8bitRegisterValue (CPU cpu, Register8 r, byte value) {
+void CPU_set8bitRegisterValue (CPU cpu, register8 r, byte value) {
    switch (r) {
       case A:
          cpu->registers[AF].bytes.high = value;

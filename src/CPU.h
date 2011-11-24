@@ -18,16 +18,16 @@ typedef union {
    } bytes;
 } reg;
 
-typedef enum Register16 {
+typedef enum register16 {
    PC,
    SP,
    AF,
    BC,
    DE,
    HL 
-} Register16;
+} register16;
 
-typedef enum Register8 {
+typedef enum register8 {
    A,
    F,
    B,
@@ -36,7 +36,7 @@ typedef enum Register8 {
    E,
    H,
    L
-} Register8;
+} register8;
 
 /* Constructor and Destructor */
 CPU CPU_init (GB gb);
@@ -46,9 +46,9 @@ void CPU_free (CPU cpu);
 int CPU_step (CPU cpu);
 
 /* Gets and sets CPU register values */ 
-word CPU_get16bitRegisterValue (CPU cpu, Register16 r);
-void CPU_set16bitRegisterValue (CPU cpu, Register16 r, word value);
-byte CPU_get8bitRegisterValue (CPU cpu, Register8 r);
-void CPU_set8bitRegisterValue (CPU cpu, Register8 r, byte value);
+word CPU_get16bitRegisterValue (CPU cpu, register16 r);
+void CPU_set16bitRegisterValue (CPU cpu, register16 r, word value);
+byte CPU_get8bitRegisterValue (CPU cpu, register8 r);
+void CPU_set8bitRegisterValue (CPU cpu, register8 r, byte value);
 
 #endif
