@@ -5,6 +5,8 @@
 
 struct CPU {
    GB gb;
+
+   bool IME;
    reg registers[NUM_REGISTERS];
 };
 

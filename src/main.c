@@ -5,13 +5,13 @@
 
 #include "GB.h"
 
-void viewUsage (const char *name);
+void showUsage (const char *name);
 
 int main (int argc, char *argv[]) {
    GB gb; 
 
    if (argc < 2) {
-      viewUsage (argv[0]);
+      showUsage (argv[0]);
    } else {
       gb = GB_init ();
       assert (gb != NULL);
@@ -25,6 +25,6 @@ int main (int argc, char *argv[]) {
    return 0;
 }
 
-void viewUsage (const char *name) {
+void showUsage (const char *name) {
    printf ("%s path_to_rom\n", name);
 }
