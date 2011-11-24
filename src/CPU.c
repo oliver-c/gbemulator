@@ -201,7 +201,12 @@ void CPU_initInstructionMap () {
    instructionMap[0x7C] = &CPU_LD_A_H;
    instructionMap[0x7D] = &CPU_LD_A_L;
    instructionMap[0x7E] = &CPU_LD_A_aHL;
+   instructionMap[0x0A] = &CPU_LD_A_aBC;
+   instructionMap[0x1A] = &CPU_LD_A_aDE;
+   instructionMap[0xFA] = &CPU_LD_A_ann;
+   instructionMap[0x3E] = &CPU_LD_A_hash; /* wtf is this */
 
+   instructionMap[0x47] = &CPU_LD_B_A;
    instructionMap[0x40] = &CPU_LD_B_B;
    instructionMap[0x41] = &CPU_LD_B_C;
    instructionMap[0x42] = &CPU_LD_B_D;
@@ -210,6 +215,7 @@ void CPU_initInstructionMap () {
    instructionMap[0x45] = &CPU_LD_B_L;
    instructionMap[0x46] = &CPU_LD_B_aHL;
 
+   instructionMap[0x4F] = &CPU_LD_C_A;
    instructionMap[0x48] = &CPU_LD_C_B;
    instructionMap[0x49] = &CPU_LD_C_C;
    instructionMap[0x4A] = &CPU_LD_C_D;
@@ -218,6 +224,7 @@ void CPU_initInstructionMap () {
    instructionMap[0x4D] = &CPU_LD_C_L;
    instructionMap[0x4E] = &CPU_LD_C_aHL;
 
+   instructionMap[0x57] = &CPU_LD_D_A;
    instructionMap[0x50] = &CPU_LD_D_B;
    instructionMap[0x51] = &CPU_LD_D_C;
    instructionMap[0x52] = &CPU_LD_D_D;
@@ -225,4 +232,55 @@ void CPU_initInstructionMap () {
    instructionMap[0x54] = &CPU_LD_D_H;
    instructionMap[0x55] = &CPU_LD_D_L;
    instructionMap[0x56] = &CPU_LD_D_aHL;
+
+   instructionMap[0x5F] = &CPU_LD_E_A;
+   instructionMap[0x58] = &CPU_LD_E_B;
+   instructionMap[0x59] = &CPU_LD_E_C;
+   instructionMap[0x5A] = &CPU_LD_E_D;
+   instructionMap[0x5B] = &CPU_LD_E_E;
+   instructionMap[0x5C] = &CPU_LD_E_H;
+   instructionMap[0x5D] = &CPU_LD_E_L;
+   instructionMap[0x5E] = &CPU_LD_E_aHL;
+
+   instructionMap[0x67] = &CPU_LD_H_A;
+   instructionMap[0x60] = &CPU_LD_H_B;
+   instructionMap[0x61] = &CPU_LD_H_C;
+   instructionMap[0x62] = &CPU_LD_H_D;
+   instructionMap[0x63] = &CPU_LD_H_E;
+   instructionMap[0x64] = &CPU_LD_H_H;
+   instructionMap[0x65] = &CPU_LD_H_L;
+   instructionMap[0x66] = &CPU_LD_H_aHL;
+
+   instructionMap[0x6F] = &CPU_LD_L_A;
+   instructionMap[0x68] = &CPU_LD_L_B;
+   instructionMap[0x69] = &CPU_LD_L_C;
+   instructionMap[0x6A] = &CPU_LD_L_D;
+   instructionMap[0x6B] = &CPU_LD_L_E;
+   instructionMap[0x6C] = &CPU_LD_L_H;
+   instructionMap[0x6D] = &CPU_LD_L_L;
+   instructionMap[0x6E] = &CPU_LD_L_aHL;
+
+   instructionMap[0x77] = &CPU_aHL_A;
+   instructionMap[0x70] = &CPU_aHL_B;
+   instructionMap[0x71] = &CPU_aHL_C;
+   instructionMap[0x72] = &CPU_aHL_D;
+   instructionMap[0x73] = &CPU_aHL_E;
+   instructionMap[0x74] = &CPU_aHL_H;
+   instructionMap[0x75] = &CPU_aHL_L;
+   instructionMap[0x36] = &CPU_aHL_n;
+
+   instructionMap[0x02] = &CPU_aBC_A;
+   instructionMap[0x12] = &CPU_aDE_A;
+   instructionMap[0xEA] = &CPU_ann_A;
+
+   instructionMap[0xF2] = &CPU_LD_A_aC;
+   instructionMap[0xE2] = &CPU_LD_aC_A;
+
+   instructionMap[0x3A] = &CPU_LDD_A_aHL;
+   instructionMap[0x32] = &CPU_LDD_aHL_A;
+   instructionMap[0x2A] = &CPU_LDI_A_aHL;
+   instructionMap[0x22] = &CPU_LDI_aHL_A;
+
+   instructionMap[0xE0] = &CPU_LDH_an_A;
+   instructionMap[0xE0] = &CPU_LDH_A_an;
 }

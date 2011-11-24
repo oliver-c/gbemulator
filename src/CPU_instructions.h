@@ -20,7 +20,12 @@ int CPU_LD_A_E (CPU cpu);
 int CPU_LD_A_H (CPU cpu);
 int CPU_LD_A_L (CPU cpu);
 int CPU_LD_A_aHL (CPU cpu);
+int CPU_LD_A_aBC (CPU cpu);
+int CPU_LD_A_aDE (CPU cpu);
+int CPU_LD_A_ann (CPU cpu);
+int CPU_LD_A_hash (CPU cpu);
 
+int CPU_LD_B_A (CPU cpu);
 int CPU_LD_B_B (CPU cpu);
 int CPU_LD_B_C (CPU cpu);
 int CPU_LD_B_D (CPU cpu);
@@ -29,6 +34,7 @@ int CPU_LD_B_H (CPU cpu);
 int CPU_LD_B_L (CPU cpu);
 int CPU_LD_B_aHL (CPU cpu);
 
+int CPU_LD_C_A (CPU cpu);
 int CPU_LD_C_B (CPU cpu);
 int CPU_LD_C_C (CPU cpu);
 int CPU_LD_C_D (CPU cpu);
@@ -37,6 +43,7 @@ int CPU_LD_C_H (CPU cpu);
 int CPU_LD_C_L (CPU cpu);
 int CPU_LD_C_aHL (CPU cpu);
 
+int CPU_LD_D_A (CPU cpu);
 int CPU_LD_D_B (CPU cpu);
 int CPU_LD_D_C (CPU cpu);
 int CPU_LD_D_D (CPU cpu);
@@ -45,4 +52,54 @@ int CPU_LD_D_H (CPU cpu);
 int CPU_LD_D_L (CPU cpu);
 int CPU_LD_D_aHL (CPU cpu);
 
+int CPU_LD_E_A (CPU cpu);
+int CPU_LD_E_B (CPU cpu);
+int CPU_LD_E_C (CPU cpu);
+int CPU_LD_E_D (CPU cpu);
+int CPU_LD_E_E (CPU cpu);
+int CPU_LD_E_H (CPU cpu);
+int CPU_LD_E_L (CPU cpu);
+int CPU_LD_E_aHL (CPU cpu);
+
+int CPU_LD_H_A (CPU cpu);
+int CPU_LD_H_B (CPU cpu);
+int CPU_LD_H_C (CPU cpu);
+int CPU_LD_H_D (CPU cpu);
+int CPU_LD_H_E (CPU cpu);
+int CPU_LD_H_H (CPU cpu);
+int CPU_LD_H_L (CPU cpu);
+int CPU_LD_H_aHL (CPU cpu);
+
+int CPU_LD_L_A (CPU cpu);
+int CPU_LD_L_B (CPU cpu);
+int CPU_LD_L_C (CPU cpu);
+int CPU_LD_L_D (CPU cpu);
+int CPU_LD_L_E (CPU cpu);
+int CPU_LD_L_H (CPU cpu);
+int CPU_LD_L_L (CPU cpu);
+int CPU_LD_L_aHL (CPU cpu);
+
+int CPU_aHL_A (CPU cpu);
+int CPU_aHL_B (CPU cpu);
+int CPU_aHL_C (CPU cpu);
+int CPU_aHL_D (CPU cpu);
+int CPU_aHL_E (CPU cpu);
+int CPU_aHL_H (CPU cpu);
+int CPU_aHL_L (CPU cpu);
+int CPU_aHL_n (CPU cpu);
+
+int CPU_aBC_A (CPU cpu);
+int CPU_aDE_A (CPU cpu);
+int CPU_ann_A (CPU cpu);
+
+int CPU_LD_A_aC (CPU cpu);
+int CPU_LD_aC_A (CPU cpu);
+
+int CPU_LDD_A_aHL (CPU cpu);
+int CPU_LDD_aHL_A (CPU cpu);
+int CPU_LDI_A_aHL (CPU cpu);
+int CPU_LDI_aHL_A (CPU cpu);
+
+int CPU_LDH_an_A (CPU cpu);
+int CPU_LDH_A_an (CPU cpu);
 #endif
