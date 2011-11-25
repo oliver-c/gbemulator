@@ -282,5 +282,5 @@ void CPU_initInstructionMap () {
    instructionMap[0x22] = &CPU_LDI_aHL_A;
 
    instructionMap[0xE0] = &CPU_LDH_an_A;
-   instructionMap[0xE0] = &CPU_LDH_A_an;
+   instructionMap[0xF0] = &CPU_LDH_A_an;
 }
