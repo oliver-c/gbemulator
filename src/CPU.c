@@ -283,4 +283,11 @@ void CPU_initInstructionMap () {
 
    instructionMap[0xE0] = &CPU_LDH_an_A;
    instructionMap[0xF0] = &CPU_LDH_A_an;
+
+   instructionMap[0x01] = &CPU_LD_BC_nn;
+   instructionMap[0x11] = &CPU_LD_DE_nn;
+   instructionMap[0x21] = &CPU_LD_HL_nn;
+   instructionMap[0x31] = &CPU_LD_SP_nn;
+
+   instructionMap[0xF9] = &CPU_LD_SP_HL;
 }

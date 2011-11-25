@@ -102,4 +102,11 @@ int CPU_LDI_aHL_A (CPU cpu);
 
 int CPU_LDH_an_A (CPU cpu);
 int CPU_LDH_A_an (CPU cpu);
+
+int CPU_LD_BC_nn (CPU cpu);
+int CPU_LD_DE_nn (CPU cpu);
+int CPU_LD_HL_nn (CPU cpu);
+int CPU_LD_SP_nn (CPU cpu);
+
+int CPU_LD_SP_HL (CPU cpu);
 #endif

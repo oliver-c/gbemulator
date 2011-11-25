@@ -590,3 +590,36 @@ int CPU_LDH_A_an (CPU cpu) {
    return 12;
 }
 
+int CPU_LD_BC_nn (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_BC = MMU_readWord (mmu, REG_PC + 1);
+   REG_PC += 3;
+   return 12;
+}
+
+int CPU_LD_DE_nn (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_DE = MMU_readWord (mmu, REG_PC + 1);
+   REG_PC += 3;
+   return 12;
+}
+
+int CPU_LD_HL_nn (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_HL = MMU_readWord (mmu, REG_PC + 1);
+   REG_PC += 3;
+   return 12;
+}
+
+int CPU_LD_SP_nn (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_SP = MMU_readWord (mmu, REG_PC + 1);
+   REG_PC += 3;
+   return 12;
+}
+
+int CPU_LD_SP_HL (CPU cpu) {
+   REG_SP = REG_HL;
+   REG_PC++;
+   return 8;
+}
