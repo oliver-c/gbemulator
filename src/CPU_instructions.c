@@ -2,6 +2,7 @@
 #include "MMU.h"
 #include "CPU.h"
 #include "CPU_instructions.h"
+#include "bitOperations.h"
 
 #define REG_PC (cpu->registers[PC].value)
 #define REG_SP (cpu->registers[SP].value)
@@ -1702,7 +1703,7 @@ int CPU_RLA (CPU cpu) {
    if (testBit(REG_A, 7)) CPU_setCarry (cpu);
 
    REG_A <<= 1;
-   if (isCarryOriginallySet) CPU_setBit (&REG_A, 0);
+   if (isCarryOriginallySet) setBit (&REG_A, 0);
    if (REG_A == 0) CPU_setZero (cpu);
 
    REG_PC++;
@@ -1730,7 +1731,7 @@ int CPU_RRA (CPU cpu) {
    if (testBit(REG_A, 0)) CPU_setCarry (cpu);
 
    REG_A >>= 1;
-   if (isCarryOriginallySet) CPU_setBit (&REG_A, 7);
+   if (isCarryOriginallySet) setBit (&REG_A, 7);
    if (REG_A == 0) CPU_setZero (cpu);
 
    REG_PC++;

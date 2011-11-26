@@ -3,8 +3,8 @@
 
 #include "types.h"
 
-bool testBit (int value, int bit);
-void setBit (int *value, int bit);
-void clearBit (int *value, int bit);
+bool testBit (byte value, byte bit);
+void setBit (byte *value, byte bit);
+void clearBit (byte *value, byte bit);
 
 #endif

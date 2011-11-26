@@ -1,14 +1,14 @@
 #include "bitOperations.h"
 
-bool testBit (int value, int bit) {
+bool testBit (byte value, byte bit) {
    return (value & (1<<bit));
 }
 
-void setBit (int *value, int bit) {
+void setBit (byte *value, byte bit) {
    *value |= (1<<bit);
 }
 
-void clearBit (int *value, int bit) {
+void clearBit (byte *value, byte bit) {
    if (testBit(*value,bit)) {
       *value ^= (1<<bit);
    }
