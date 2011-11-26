@@ -478,6 +478,21 @@ void CPU_initInstructionMap () {
    instructionMap[0x23] = &CPU_INC_HL;
    instructionMap[0x33] = &CPU_INC_SP;
 
+   instructionMap[0x0B] = &CPU_DEC_BC;
+   instructionMap[0x1B] = &CPU_DEC_DE;
+   instructionMap[0x2B] = &CPU_DEC_HL;
+   instructionMap[0x3B] = &CPU_DEC_SP;
+
+   instructionMap[0x27] = &CPU_DAA;
+   instructionMap[0x2F] = &CPU_CPL;
+   instructionMap[0x3F] = &CPU_CCF;
+   instructionMap[0x37] = &CPU_SCF;
+   instructionMap[0x76] = &CPU_HALT;
+   instructionMap[0x10] = &CPU_STOP;
+
+   instructionMap[0xF3] = &CPU_DI;
+   instructionMap[0xFB] = &CPU_EI;
+
    instructionMapCB[0x37] = &CPU_SWAP_A; 
    instructionMapCB[0x30] = &CPU_SWAP_B; 
    instructionMapCB[0x31] = &CPU_SWAP_C; 

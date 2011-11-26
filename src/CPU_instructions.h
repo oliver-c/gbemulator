@@ -235,6 +235,16 @@ int CPU_DEC_DE (CPU cpu);
 int CPU_DEC_HL (CPU cpu);
 int CPU_DEC_SP (CPU cpu);
 
+int CPU_DAA (CPU cpu);
+int CPU_CPL (CPU cpu);
+int CPU_CCF (CPU cpu);
+int CPU_SCF (CPU cpu);
+int CPU_HALT (CPU cpu);
+int CPU_STOP (CPU cpu);
+
+int CPU_DI (CPU cpu);
+int CPU_EI (CPU cpu);
+
 int CPU_SWAP_A (CPU cpu);
 int CPU_SWAP_B (CPU cpu);
 int CPU_SWAP_C (CPU cpu);

@@ -201,6 +201,8 @@ void CPU_8bitSWAP (CPU cpu, byte *dest) {
    lowerNibble = *dest & 0x0F;
 
    *dest = (lowerNibble << 4) | upperNibble; 
+
+   if (*dest == 0) CPU_setZero (cpu);
 }
 
 int CPU_NOP (CPU cpu) {
@@ -1561,6 +1563,70 @@ int CPU_DEC_SP (CPU cpu) {
    return 8;
 }
 
+int CPU_DAA (CPU cpu) {
+   /* TODO */
+   CPU_clearHalfCarry (cpu);
+
+   REG_PC++;
+   return 4;
+}
+
+int CPU_CPL (CPU cpu) {
+   CPU_setSub (cpu);
+   CPU_setHalfCarry (cpu);
+
+   REG_A = ~REG_A;
+
+   REG_PC++;
+   return 4;
+}
+
+int CPU_CCF (CPU cpu) {
+   CPU_clearSub (cpu);
+   CPU_clearHalfCarry (cpu);
+
+   if (CPU_isCarrySet(cpu)) {
+      CPU_clearCarry (cpu);
+   } else {
+      CPU_setCarry (cpu);
+   }
+
+   REG_PC++;
+   return 4;
+}
+
+int CPU_SCF (CPU cpu) {
+   CPU_clearSub (cpu);
+   CPU_clearHalfCarry (cpu);
+   CPU_setCarry (cpu);
+   
+   REG_PC++;
+   return 4;
+}
+
+int CPU_HALT (CPU cpu) {
+   REG_PC++;
+   return 4;
+}
+
+int CPU_STOP (CPU cpu) {
+   REG_PC += 2;
+   return 4;
+}
+
+int CPU_DI (CPU cpu) {
+   CPU_setIME (FALSE);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_EI (CPU cpu) {
+   CPU_setIME (TRUE);
+   REG_PC++;
+   return 4;
+}
+
+
 int CPU_SWAP_A (CPU cpu) {
    CPU_8bitSWAP (cpu, &REG_A);
    REG_PC++;
@@ -1614,4 +1680,3 @@ int CPU_SWAP_aHL (CPU cpu) {
    REG_PC++;
    return 16;
 }
-
