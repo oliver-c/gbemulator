@@ -1398,11 +1398,11 @@ int CPU_DEC_L (CPU cpu) {
 }
 
 int CPU_DEC_aHL (CPU cpu) {
-   byte byteToInc;
+   byte byteToDec;
    MMU mmu = GB_getMMU (cpu->gb);
    
-   byteToInc = MMU_readByte (mmu, REG_HL);
-   CPU_8bitDEC (cpu, &byteToInc);
-   MMU_writeByte (mmu, REG_HL, byteToInc);
+   byteToDec = MMU_readByte (mmu, REG_HL);
+   CPU_8bitDEC (cpu, &byteToDec);
+   MMU_writeByte (mmu, REG_HL, byteToDec);
    return 12;
 }
