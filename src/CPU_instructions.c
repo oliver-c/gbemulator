@@ -1615,13 +1615,13 @@ int CPU_STOP (CPU cpu) {
 }
 
 int CPU_DI (CPU cpu) {
-   CPU_setIME (FALSE);
+   CPU_setIME (cpu, FALSE);
    REG_PC++;
    return 4;
 }
 
 int CPU_EI (CPU cpu) {
-   CPU_setIME (TRUE);
+   CPU_setIME (cpu, TRUE);
    REG_PC++;
    return 4;
 }
