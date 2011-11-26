@@ -223,6 +223,26 @@ void CPU_clearSub (CPU cpu) {
    }
 }
 
+void CPU_clearFlags (CPU cpu) {
+   cpu->registers[AF].bytes.low = 0;
+}
+
+bool CPU_isCarrySet (CPU cpu) {
+   return (cpu->registers[AF].bytes.low & (1<<FLAG_CARRY_BIT));
+}
+
+bool CPU_isZeroSet (CPU cpu) {
+   return (cpu->registers[AF].bytes.low & (1<<FLAG_ZERO_BIT));
+}
+
+bool CPU_isHalfCarrySet (CPU cpu) {
+   return (cpu->registers[AF].bytes.low & (1<<FLAG_HALFCARRY_BIT));
+}
+
+bool  CPU_isSubSet (CPU cpu) {
+   return (cpu->registers[AF].bytes.low & (1<<FLAG_SUB_BIT));
+}
+
 void CPU_initInstructionMap () {
    instructionMap[0x00] = &CPU_NOP;
 
@@ -342,4 +362,43 @@ void CPU_initInstructionMap () {
    instructionMap[0xC1] = &CPU_POP_BC;
    instructionMap[0xD1] = &CPU_POP_DE;
    instructionMap[0xE1] = &CPU_POP_HL;
+
+   instructionMap[0x87] = &CPU_ADD_A_A;
+   instructionMap[0x80] = &CPU_ADD_A_B;
+   instructionMap[0x81] = &CPU_ADD_A_C;
+   instructionMap[0x82] = &CPU_ADD_A_D;
+   instructionMap[0x83] = &CPU_ADD_A_E;
+   instructionMap[0x84] = &CPU_ADD_A_H;
+   instructionMap[0x85] = &CPU_ADD_A_L;
+   instructionMap[0x86] = &CPU_ADD_A_aHL;
+   instructionMap[0xC6] = &CPU_ADD_A_hash;
+
+   instructionMap[0x8F] = &CPU_ADC_A_A; 
+   instructionMap[0x88] = &CPU_ADC_A_B; 
+   instructionMap[0x89] = &CPU_ADC_A_C; 
+   instructionMap[0x8A] = &CPU_ADC_A_D; 
+   instructionMap[0x8B] = &CPU_ADC_A_E; 
+   instructionMap[0x8C] = &CPU_ADC_A_H; 
+   instructionMap[0x8D] = &CPU_ADC_A_L; 
+   instructionMap[0x8E] = &CPU_ADC_A_aHL; 
+   instructionMap[0xCE] = &CPU_ADC_A_hash; 
+
+   instructionMap[0x97] = &CPU_SUB_A_A;
+   instructionMap[0x90] = &CPU_SUB_A_B;
+   instructionMap[0x91] = &CPU_SUB_A_C;
+   instructionMap[0x92] = &CPU_SUB_A_D;
+   instructionMap[0x93] = &CPU_SUB_A_E;
+   instructionMap[0x94] = &CPU_SUB_A_H;
+   instructionMap[0x95] = &CPU_SUB_A_L;
+   instructionMap[0x96] = &CPU_SUB_A_aHL;
+   instructionMap[0xD6] = &CPU_SUB_A_hash;
+
+   instructionMap[0x9F] = &CPU_SBC_A_A;
+   instructionMap[0x98] = &CPU_SBC_A_B;
+   instructionMap[0x99] = &CPU_SBC_A_C;
+   instructionMap[0x9A] = &CPU_SBC_A_D;
+   instructionMap[0x9B] = &CPU_SBC_A_E;
+   instructionMap[0x9C] = &CPU_SBC_A_H;
+   instructionMap[0x9D] = &CPU_SBC_A_L;
+   instructionMap[0x9E] = &CPU_SBC_A_aHL;
 }

@@ -85,5 +85,11 @@ void CPU_clearCarry (CPU cpu);
 void CPU_clearZero (CPU cpu);
 void CPU_clearHalfCarry (CPU cpu);
 void CPU_clearSub (CPU cpu);
+void CPU_clearFlags (CPU cpu);
+
+bool CPU_isCarrySet (CPU cpu);
+bool CPU_isZeroSet (CPU cpu);
+bool CPU_isHalfCarrySet (CPU cpu);
+bool CPU_isSubSet (CPU cpu);
 
 #endif
