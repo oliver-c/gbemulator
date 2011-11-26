@@ -14,8 +14,9 @@ struct CPU {
    reg registers[NUM_REGISTERS];
 };
 
-/* An array of pointers to the functions that will execute the CPU instructions */
+/* Arrays of pointers to the functions that will execute the CPU instructions */
 int (*instructionMap[0x100])(CPU) = {NULL};
+int (*instructionMapCB[0x100])(CPU) = {NULL};
 
 void CPU_initInstructionMap (void);
 
@@ -125,7 +126,13 @@ int CPU_step (CPU cpu) {
    opcode = MMU_readByte (mmu, cpu->registers[PC].value);
 
    /* Execute the instruction */
-   if (instructionMap[opcode] != NULL) {
+   if (opcode == 0xCB) {
+      /* 0xCB prefixed instruction */
+      cpu->registers[PC].value++;
+      opcode = MMU_readByte (mmu, cpu->registers[PC].value);
+      if (instructionMap[opcode] != NULL) 
+         numCycles = instructionMapCB[opcode] (cpu);
+   } else if (instructionMap[opcode] != NULL) {
       numCycles = instructionMap[opcode] (cpu);
    } else {
       fprintf (stderr, "ERROR: Opcode %x is not implemented\n", opcode);
@@ -470,4 +477,13 @@ void CPU_initInstructionMap () {
    instructionMap[0x13] = &CPU_INC_DE;
    instructionMap[0x23] = &CPU_INC_HL;
    instructionMap[0x33] = &CPU_INC_SP;
+
+   instructionMapCB[0x37] = &CPU_SWAP_A; 
+   instructionMapCB[0x30] = &CPU_SWAP_B; 
+   instructionMapCB[0x31] = &CPU_SWAP_C; 
+   instructionMapCB[0x32] = &CPU_SWAP_D; 
+   instructionMapCB[0x33] = &CPU_SWAP_E; 
+   instructionMapCB[0x34] = &CPU_SWAP_H; 
+   instructionMapCB[0x35] = &CPU_SWAP_L; 
+   instructionMapCB[0x36] = &CPU_SWAP_aHL; 
 }

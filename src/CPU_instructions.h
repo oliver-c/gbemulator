@@ -235,4 +235,13 @@ int CPU_DEC_DE (CPU cpu);
 int CPU_DEC_HL (CPU cpu);
 int CPU_DEC_SP (CPU cpu);
 
+int CPU_SWAP_A (CPU cpu);
+int CPU_SWAP_B (CPU cpu);
+int CPU_SWAP_C (CPU cpu);
+int CPU_SWAP_D (CPU cpu);
+int CPU_SWAP_E (CPU cpu);
+int CPU_SWAP_H (CPU cpu);
+int CPU_SWAP_L (CPU cpu);
+int CPU_SWAP_aHL (CPU cpu);
+
 #endif

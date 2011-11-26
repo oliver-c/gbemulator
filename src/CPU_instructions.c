@@ -40,8 +40,8 @@ void CPU_8bitUpdateHalfCarry (CPU cpu, int oldValue, int newValue, int type) {
 }
 
 void CPU_16bitUpdateHalfCarry (CPU cpu, int oldValue, int newValue, int type) {
-   int oldNibble = oldValue & 0xF00;
-   int newNibble = newValue & 0xF00;
+   int oldNibble = (oldValue & 0xF00) >> 8;
+   int newNibble = (newValue & 0xF00) >> 8;
 
    if (type == ADD) {
       if (newNibble < oldNibble) CPU_setHalfCarry (cpu);   
@@ -191,6 +191,16 @@ void CPU_16bitADD (CPU cpu, word *dest, word *toAdd) {
    CPU_16bitUpdateHalfCarry (cpu, *dest, result, ADD);
 
    *dest += *toAdd; 
+}
+
+void CPU_8bitSWAP (CPU cpu, byte *dest) {
+   byte upperNibble;
+   byte lowerNibble;
+
+   upperNibble = (*dest & 0xF0) >> 4;
+   lowerNibble = *dest & 0x0F;
+
+   *dest = (lowerNibble << 4) | upperNibble; 
 }
 
 int CPU_NOP (CPU cpu) {
@@ -1550,3 +1560,58 @@ int CPU_DEC_SP (CPU cpu) {
    REG_PC++;
    return 8;
 }
+
+int CPU_SWAP_A (CPU cpu) {
+   CPU_8bitSWAP (cpu, &REG_A);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_SWAP_B (CPU cpu) {
+   CPU_8bitSWAP (cpu, &REG_B);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_SWAP_C (CPU cpu) {
+   CPU_8bitSWAP (cpu, &REG_C);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_SWAP_D (CPU cpu) {
+   CPU_8bitSWAP (cpu, &REG_D);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_SWAP_E (CPU cpu) {
+   CPU_8bitSWAP (cpu, &REG_E);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_SWAP_H (CPU cpu) {
+   CPU_8bitSWAP (cpu, &REG_H);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_SWAP_L (CPU cpu) {
+   CPU_8bitSWAP (cpu, &REG_L);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_SWAP_aHL (CPU cpu) {
+   byte byteToSwap;
+   MMU mmu = GB_getMMU (cpu->gb);
+
+   byteToSwap = MMU_readByte (mmu, REG_HL);
+   CPU_8bitSWAP (cpu, &byteToSwap);
+   MMU_writeByte (mmu, REG_HL, byteToSwap);
+
+   REG_PC++;
+   return 16;
+}
+
