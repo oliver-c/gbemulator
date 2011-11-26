@@ -401,4 +401,62 @@ void CPU_initInstructionMap () {
    instructionMap[0x9C] = &CPU_SBC_A_H;
    instructionMap[0x9D] = &CPU_SBC_A_L;
    instructionMap[0x9E] = &CPU_SBC_A_aHL;
+
+   instructionMap[0xA7] = &CPU_AND_A_A;
+   instructionMap[0xA0] = &CPU_AND_A_B;
+   instructionMap[0xA1] = &CPU_AND_A_C;
+   instructionMap[0xA2] = &CPU_AND_A_D;
+   instructionMap[0xA3] = &CPU_AND_A_E;
+   instructionMap[0xA4] = &CPU_AND_A_H;
+   instructionMap[0xA5] = &CPU_AND_A_L;
+   instructionMap[0xA6] = &CPU_AND_A_aHL;
+   instructionMap[0xE6] = &CPU_AND_A_hash;
+
+   instructionMap[0xB7] = &CPU_OR_A_A;
+   instructionMap[0xB0] = &CPU_OR_A_B;
+   instructionMap[0xB1] = &CPU_OR_A_C;
+   instructionMap[0xB2] = &CPU_OR_A_D;
+   instructionMap[0xB3] = &CPU_OR_A_E;
+   instructionMap[0xB4] = &CPU_OR_A_H;
+   instructionMap[0xB5] = &CPU_OR_A_L;
+   instructionMap[0xB6] = &CPU_OR_A_aHL;
+   instructionMap[0xB6] = &CPU_OR_A_hash;
+
+   instructionMap[0xAF] = &CPU_XOR_A_A;
+   instructionMap[0xA8] = &CPU_XOR_A_B;
+   instructionMap[0xA9] = &CPU_XOR_A_C;
+   instructionMap[0xAA] = &CPU_XOR_A_D;
+   instructionMap[0xAB] = &CPU_XOR_A_E;
+   instructionMap[0xAC] = &CPU_XOR_A_H;
+   instructionMap[0xAD] = &CPU_XOR_A_L;
+   instructionMap[0xAE] = &CPU_XOR_A_aHL;
+   instructionMap[0xEE] = &CPU_XOR_A_hash;
+
+   instructionMap[0xBF] = &CPU_CP_A_A;
+   instructionMap[0xB8] = &CPU_CP_A_B;
+   instructionMap[0xB9] = &CPU_CP_A_C;
+   instructionMap[0xBA] = &CPU_CP_A_D;
+   instructionMap[0xBB] = &CPU_CP_A_E;
+   instructionMap[0xBC] = &CPU_CP_A_H;
+   instructionMap[0xBD] = &CPU_CP_A_L;
+   instructionMap[0xBE] = &CPU_CP_A_aHL;
+   instructionMap[0xFE] = &CPU_CP_A_hash;
+
+   instructionMap[0x3C] = &CPU_INC_A;
+   instructionMap[0x04] = &CPU_INC_B;
+   instructionMap[0x0C] = &CPU_INC_C;
+   instructionMap[0x14] = &CPU_INC_D;
+   instructionMap[0x1C] = &CPU_INC_E;
+   instructionMap[0x24] = &CPU_INC_H;
+   instructionMap[0x2C] = &CPU_INC_L;
+   instructionMap[0x34] = &CPU_INC_aHL;
+
+   instructionMap[0x3D] = &CPU_DEC_A;
+   instructionMap[0x05] = &CPU_DEC_B;
+   instructionMap[0x0D] = &CPU_DEC_C;
+   instructionMap[0x15] = &CPU_DEC_D;
+   instructionMap[0x1D] = &CPU_DEC_E;
+   instructionMap[0x25] = &CPU_DEC_H;
+   instructionMap[0x2D] = &CPU_DEC_L;
+   instructionMap[0x35] = &CPU_DEC_aHL;
 }

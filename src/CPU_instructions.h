@@ -160,6 +160,62 @@ int CPU_SBC_A_E (CPU cpu);
 int CPU_SBC_A_H (CPU cpu);
 int CPU_SBC_A_L (CPU cpu);
 int CPU_SBC_A_aHL (CPU cpu);
-int CPU_SBC_A_hash (CPU cpu);
 
+int CPU_AND_A_A (CPU cpu);
+int CPU_AND_A_B (CPU cpu);
+int CPU_AND_A_C (CPU cpu);
+int CPU_AND_A_D (CPU cpu);
+int CPU_AND_A_E (CPU cpu);
+int CPU_AND_A_H (CPU cpu);
+int CPU_AND_A_L (CPU cpu);
+int CPU_AND_A_aHL (CPU cpu);
+int CPU_AND_A_hash (CPU cpu);
+
+int CPU_OR_A_A (CPU cpu);
+int CPU_OR_A_B (CPU cpu);
+int CPU_OR_A_C (CPU cpu);
+int CPU_OR_A_D (CPU cpu);
+int CPU_OR_A_E (CPU cpu);
+int CPU_OR_A_H (CPU cpu);
+int CPU_OR_A_L (CPU cpu);
+int CPU_OR_A_aHL (CPU cpu);
+int CPU_OR_A_hash (CPU cpu);
+
+int CPU_XOR_A_A (CPU cpu);
+int CPU_XOR_A_B (CPU cpu);
+int CPU_XOR_A_C (CPU cpu);
+int CPU_XOR_A_D (CPU cpu);
+int CPU_XOR_A_E (CPU cpu);
+int CPU_XOR_A_H (CPU cpu);
+int CPU_XOR_A_L (CPU cpu);
+int CPU_XOR_A_aHL (CPU cpu);
+int CPU_XOR_A_hash (CPU cpu);
+
+int CPU_CP_A_A (CPU cpu);
+int CPU_CP_A_B (CPU cpu);
+int CPU_CP_A_C (CPU cpu);
+int CPU_CP_A_D (CPU cpu);
+int CPU_CP_A_E (CPU cpu);
+int CPU_CP_A_H (CPU cpu);
+int CPU_CP_A_L (CPU cpu);
+int CPU_CP_A_aHL (CPU cpu);
+int CPU_CP_A_hash (CPU cpu);
+
+int CPU_INC_A (CPU cpu);
+int CPU_INC_B (CPU cpu);
+int CPU_INC_C (CPU cpu);
+int CPU_INC_D (CPU cpu);
+int CPU_INC_E (CPU cpu);
+int CPU_INC_H (CPU cpu);
+int CPU_INC_L (CPU cpu);
+int CPU_INC_aHL (CPU cpu);
+
+int CPU_DEC_A (CPU cpu);
+int CPU_DEC_B (CPU cpu);
+int CPU_DEC_C (CPU cpu);
+int CPU_DEC_D (CPU cpu);
+int CPU_DEC_E (CPU cpu);
+int CPU_DEC_H (CPU cpu);
+int CPU_DEC_L (CPU cpu);
+int CPU_DEC_aHL (CPU cpu);
 #endif

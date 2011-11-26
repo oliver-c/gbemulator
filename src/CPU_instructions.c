@@ -75,7 +75,6 @@ void CPU_8bitSUB (CPU cpu, byte *dest, byte *toSub) {
 
    result = (int)*dest - (int)*toSub;
 
-   CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
    if (result > 0xFF || result < 0) CPU_setCarry (cpu);
    CPU_updateHalfCarry (cpu, *dest, result, SUB);
@@ -94,7 +93,6 @@ void CPU_8bitSBC (CPU cpu, byte *dest, byte *toSub) {
 
    result = (int)*dest - (int)*toSub - C;
 
-   CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
    if (result > 0xFF || result < 0) CPU_setCarry (cpu);
    CPU_updateHalfCarry (cpu, *dest, result, SUB);
@@ -102,6 +100,73 @@ void CPU_8bitSBC (CPU cpu, byte *dest, byte *toSub) {
    *dest -= *toSub + C;
 }
 
+void CPU_8bitAND (CPU cpu, byte *dest, byte *toAnd) {
+   CPU_clearFlags (cpu);
+   CPU_setHalfCarry (cpu);
+
+   *dest &= *toAnd;
+
+   if (*dest == 0) CPU_setZero (cpu);
+}
+
+void CPU_8bitOR (CPU cpu, byte *dest, byte *toOr) {
+   CPU_clearFlags (cpu);
+
+   *dest |= *toOr;
+
+   if (*dest == 0) CPU_setZero (cpu);
+}
+
+void CPU_8bitXOR (CPU cpu, byte *dest, byte *toXor) {
+   CPU_clearFlags (cpu);
+
+   *dest ^= *toXor;
+
+   if (*dest == 0) CPU_setZero (cpu);
+}
+
+void CPU_8bitCP (CPU cpu, byte *dest, byte *toCp) {
+   int result; 
+
+   CPU_clearFlags (cpu);
+   CPU_setSub (cpu);
+
+   result = (int)*dest - (int)*toCp;
+
+   if (result == 0) CPU_setZero (cpu);
+   if (result > 0xFF || result < 0) CPU_setCarry (cpu);
+   CPU_updateHalfCarry (cpu, *dest, result, SUB);
+}
+
+void CPU_8bitINC (CPU cpu, byte *dest) {
+   int result;
+   
+   CPU_clearZero (cpu); 
+   CPU_clearSub (cpu); 
+   CPU_clearHalfCarry (cpu);
+   result = (int)*dest + 1;
+
+   if (result == 0) CPU_setZero (cpu);
+   CPU_updateHalfCarry (cpu, *dest, result, ADD);
+
+   (*dest)++;
+}
+
+void CPU_8bitDEC (CPU cpu, byte *dest) {
+   int result;
+   
+   CPU_clearZero (cpu); 
+   CPU_clearSub (cpu); 
+   CPU_clearHalfCarry (cpu);
+   CPU_setSub (cpu);
+
+   result = (int)*dest - 1;
+
+   if (result == 0) CPU_setZero (cpu);
+   CPU_updateHalfCarry (cpu, *dest, result, SUB);
+
+   (*dest)--;
+}
 
 int CPU_NOP (CPU cpu) {
    REG_PC++;
@@ -1018,4 +1083,326 @@ int CPU_SBC_A_aHL (CPU cpu) {
    
    REG_PC++;
    return 8;
+}
+
+int CPU_AND_A_A (CPU cpu) {
+   CPU_8bitAND (cpu, &REG_A, &REG_A);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_AND_A_B (CPU cpu) {
+   CPU_8bitAND (cpu, &REG_A, &REG_B);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_AND_A_C (CPU cpu) {
+   CPU_8bitAND (cpu, &REG_A, &REG_C);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_AND_A_D (CPU cpu) {
+   CPU_8bitAND (cpu, &REG_A, &REG_D);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_AND_A_E (CPU cpu) {
+   CPU_8bitAND (cpu, &REG_A, &REG_E);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_AND_A_H (CPU cpu) {
+   CPU_8bitAND (cpu, &REG_A, &REG_H);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_AND_A_L (CPU cpu) {
+   CPU_8bitAND (cpu, &REG_A, &REG_L);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_AND_A_aHL (CPU cpu) {
+   byte byteToAnd;
+   MMU mmu = GB_getMMU (cpu->gb);
+   
+   byteToAnd = MMU_readByte (mmu, REG_HL);
+   CPU_8bitAND (cpu, &REG_A, &byteToAnd);
+   
+   REG_PC++;
+   return 8;
+}
+
+int CPU_AND_A_hash (CPU cpu) {
+   /* TODO */
+   return 8;
+}
+
+int CPU_OR_A_A (CPU cpu) {
+   CPU_8bitOR (cpu, &REG_A, &REG_A);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_OR_A_B (CPU cpu) {
+   CPU_8bitOR (cpu, &REG_A, &REG_B);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_OR_A_C (CPU cpu) {
+   CPU_8bitOR (cpu, &REG_A, &REG_C);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_OR_A_D (CPU cpu) {
+   CPU_8bitOR (cpu, &REG_A, &REG_D);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_OR_A_E (CPU cpu) {
+   CPU_8bitOR (cpu, &REG_A, &REG_E);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_OR_A_H (CPU cpu) {
+   CPU_8bitOR (cpu, &REG_A, &REG_H);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_OR_A_L (CPU cpu) {
+   CPU_8bitOR (cpu, &REG_A, &REG_L);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_OR_A_aHL (CPU cpu) {
+   byte byteToOr;
+   MMU mmu = GB_getMMU (cpu->gb);
+   
+   byteToOr = MMU_readByte (mmu, REG_HL);
+   CPU_8bitOR (cpu, &REG_A, &byteToOr);
+   
+   REG_PC++;
+   return 8;
+}
+
+int CPU_OR_A_hash (CPU cpu) {
+   /* TODO */
+   return 8;
+}
+
+int CPU_XOR_A_A (CPU cpu) {
+   CPU_8bitXOR (cpu, &REG_A, &REG_A);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_XOR_A_B (CPU cpu) {
+   CPU_8bitXOR (cpu, &REG_A, &REG_B);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_XOR_A_C (CPU cpu) {
+   CPU_8bitXOR (cpu, &REG_A, &REG_C);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_XOR_A_D (CPU cpu) {
+   CPU_8bitXOR (cpu, &REG_A, &REG_D);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_XOR_A_E (CPU cpu) {
+   CPU_8bitXOR (cpu, &REG_A, &REG_E);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_XOR_A_H (CPU cpu) {
+   CPU_8bitXOR (cpu, &REG_A, &REG_H);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_XOR_A_L (CPU cpu) {
+   CPU_8bitXOR (cpu, &REG_A, &REG_L);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_XOR_A_aHL (CPU cpu) {
+   byte byteToXor;
+   MMU mmu = GB_getMMU (cpu->gb);
+   
+   byteToXor = MMU_readByte (mmu, REG_HL);
+   CPU_8bitXOR (cpu, &REG_A, &byteToXor);
+   
+   REG_PC++;
+   return 8;
+}
+
+int CPU_XOR_A_hash (CPU cpu) {
+   /* TODO */
+   return 8;
+}
+
+int CPU_CP_A_A (CPU cpu) {
+   CPU_8bitCP (cpu, &REG_A, &REG_A);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_CP_A_B (CPU cpu) {
+   CPU_8bitCP (cpu, &REG_A, &REG_B);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_CP_A_C (CPU cpu) {
+   CPU_8bitCP (cpu, &REG_A, &REG_C);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_CP_A_D (CPU cpu) {
+   CPU_8bitCP (cpu, &REG_A, &REG_D);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_CP_A_E (CPU cpu) {
+   CPU_8bitCP (cpu, &REG_A, &REG_E);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_CP_A_H (CPU cpu) {
+   CPU_8bitCP (cpu, &REG_A, &REG_H);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_CP_A_L (CPU cpu) {
+   CPU_8bitCP (cpu, &REG_A, &REG_L);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_CP_A_aHL (CPU cpu) {
+   byte byteToCp;
+   MMU mmu = GB_getMMU (cpu->gb);
+   
+   byteToCp = MMU_readByte (mmu, REG_HL);
+   CPU_8bitCP (cpu, &REG_A, &byteToCp);
+   
+   REG_PC++;
+   return 8;
+}
+
+int CPU_CP_A_hash (CPU cpu) {
+   /* TODO */
+   return 8;
+}
+
+int CPU_INC_A (CPU cpu) {
+   CPU_8bitINC (cpu, &REG_A);
+   return 4;
+}
+
+int CPU_INC_B (CPU cpu) {  
+   CPU_8bitINC (cpu, &REG_B);
+   return 4;
+}
+
+int CPU_INC_C (CPU cpu) {
+   CPU_8bitINC (cpu, &REG_C);
+   return 4;
+}
+
+int CPU_INC_D (CPU cpu) {
+   CPU_8bitINC (cpu, &REG_D);
+   return 4;
+}
+
+int CPU_INC_E (CPU cpu) {
+   CPU_8bitINC (cpu, &REG_E);
+   return 4;
+}
+
+int CPU_INC_H (CPU cpu) {
+   CPU_8bitINC (cpu, &REG_H);
+   return 4;
+}
+
+int CPU_INC_L (CPU cpu) {
+   CPU_8bitINC (cpu, &REG_L);
+   return 4;
+}
+
+int CPU_INC_aHL (CPU cpu) {
+   byte byteToInc;
+   MMU mmu = GB_getMMU (cpu->gb);
+   
+   byteToInc = MMU_readByte (mmu, REG_HL);
+   CPU_8bitINC (cpu, &byteToInc);
+   MMU_writeByte (mmu, REG_HL, byteToInc);
+   return 12;
+}
+
+int CPU_DEC_A (CPU cpu) {
+   CPU_8bitDEC (cpu, &REG_A);
+   return 4;
+}
+
+int CPU_DEC_B (CPU cpu) {  
+   CPU_8bitDEC (cpu, &REG_B);
+   return 4;
+}
+
+int CPU_DEC_C (CPU cpu) {
+   CPU_8bitDEC (cpu, &REG_C);
+   return 4;
+}
+
+int CPU_DEC_D (CPU cpu) {
+   CPU_8bitDEC (cpu, &REG_D);
+   return 4;
+}
+
+int CPU_DEC_E (CPU cpu) {
+   CPU_8bitDEC (cpu, &REG_E);
+   return 4;
+}
+
+int CPU_DEC_H (CPU cpu) {
+   CPU_8bitDEC (cpu, &REG_H);
+   return 4;
+}
+
+int CPU_DEC_L (CPU cpu) {
+   CPU_8bitDEC (cpu, &REG_L);
+   return 4;
+}
+
+int CPU_DEC_aHL (CPU cpu) {
+   byte byteToInc;
+   MMU mmu = GB_getMMU (cpu->gb);
+   
+   byteToInc = MMU_readByte (mmu, REG_HL);
+   CPU_8bitDEC (cpu, &byteToInc);
+   MMU_writeByte (mmu, REG_HL, byteToInc);
+   return 12;
 }
