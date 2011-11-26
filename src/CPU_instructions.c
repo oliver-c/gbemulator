@@ -41,7 +41,7 @@ void CPU_updateHalfCarry (CPU cpu, int oldValue, int newValue, int type) {
 
 void CPU_8bitADD (CPU cpu, byte *dest, byte *toAdd) {
    int result;
-   result = *dest + *toAdd;
+   result = (int)*dest + (int)*toAdd;
 
    CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
@@ -57,7 +57,7 @@ void CPU_8bitADC (CPU cpu, byte *dest, byte *toAdd) {
    
    if (CPU_isCarrySet (cpu)) C = 1;
 
-   result = *dest + *toAdd + C;
+   result = (int)*dest + (int)*toAdd + C;
 
    CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
@@ -73,7 +73,7 @@ void CPU_8bitSUB (CPU cpu, byte *dest, byte *toSub) {
    CPU_clearFlags (cpu);
    CPU_setSub (cpu);
 
-   result = *dest - *toSub;
+   result = (int)*dest - (int)*toSub;
 
    CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
@@ -92,7 +92,7 @@ void CPU_8bitSBC (CPU cpu, byte *dest, byte *toSub) {
    CPU_clearFlags (cpu);
    CPU_setSub (cpu);
 
-   result = *dest - *toSub - C;
+   result = (int)*dest - (int)*toSub - C;
 
    CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
