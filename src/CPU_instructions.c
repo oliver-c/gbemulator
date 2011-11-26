@@ -28,9 +28,20 @@ struct CPU {
    reg registers[NUM_REGISTERS];
 };
 
-void CPU_updateHalfCarry (CPU cpu, int oldValue, int newValue, int type) {
+void CPU_8bitUpdateHalfCarry (CPU cpu, int oldValue, int newValue, int type) {
    int oldNibble = oldValue & 0xF;
    int newNibble = newValue & 0xF;
+
+   if (type == ADD) {
+      if (newNibble < oldNibble) CPU_setHalfCarry (cpu);   
+   } else {
+      if (newNibble > oldNibble) CPU_setHalfCarry (cpu);
+   }
+}
+
+void CPU_16bitUpdateHalfCarry (CPU cpu, int oldValue, int newValue, int type) {
+   int oldNibble = oldValue & 0xF00;
+   int newNibble = newValue & 0xF00;
 
    if (type == ADD) {
       if (newNibble < oldNibble) CPU_setHalfCarry (cpu);   
@@ -46,7 +57,7 @@ void CPU_8bitADD (CPU cpu, byte *dest, byte *toAdd) {
    CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
    if (result > 0xFF || result < 0) CPU_setCarry (cpu);
-   CPU_updateHalfCarry (cpu, *dest, result, ADD);
+   CPU_8bitUpdateHalfCarry (cpu, *dest, result, ADD);
 
    *dest += *toAdd;
 }
@@ -62,7 +73,7 @@ void CPU_8bitADC (CPU cpu, byte *dest, byte *toAdd) {
    CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
    if (result > 0xFF || result < 0) CPU_setCarry (cpu);
-   CPU_updateHalfCarry (cpu, *dest, result, ADD);
+   CPU_8bitUpdateHalfCarry (cpu, *dest, result, ADD);
 
    *dest += *toAdd + C;
 }
@@ -77,7 +88,7 @@ void CPU_8bitSUB (CPU cpu, byte *dest, byte *toSub) {
 
    if (result == 0) CPU_setZero (cpu);
    if (result > 0xFF || result < 0) CPU_setCarry (cpu);
-   CPU_updateHalfCarry (cpu, *dest, result, SUB);
+   CPU_8bitUpdateHalfCarry (cpu, *dest, result, SUB);
 
    *dest -= *toSub;
 }
@@ -95,7 +106,7 @@ void CPU_8bitSBC (CPU cpu, byte *dest, byte *toSub) {
 
    if (result == 0) CPU_setZero (cpu);
    if (result > 0xFF || result < 0) CPU_setCarry (cpu);
-   CPU_updateHalfCarry (cpu, *dest, result, SUB);
+   CPU_8bitUpdateHalfCarry (cpu, *dest, result, SUB);
 
    *dest -= *toSub + C;
 }
@@ -135,7 +146,7 @@ void CPU_8bitCP (CPU cpu, byte *dest, byte *toCp) {
 
    if (result == 0) CPU_setZero (cpu);
    if (result > 0xFF || result < 0) CPU_setCarry (cpu);
-   CPU_updateHalfCarry (cpu, *dest, result, SUB);
+   CPU_8bitUpdateHalfCarry (cpu, *dest, result, SUB);
 }
 
 void CPU_8bitINC (CPU cpu, byte *dest) {
@@ -147,7 +158,7 @@ void CPU_8bitINC (CPU cpu, byte *dest) {
    result = (int)*dest + 1;
 
    if (result == 0) CPU_setZero (cpu);
-   CPU_updateHalfCarry (cpu, *dest, result, ADD);
+   CPU_8bitUpdateHalfCarry (cpu, *dest, result, ADD);
 
    (*dest)++;
 }
@@ -163,9 +174,23 @@ void CPU_8bitDEC (CPU cpu, byte *dest) {
    result = (int)*dest - 1;
 
    if (result == 0) CPU_setZero (cpu);
-   CPU_updateHalfCarry (cpu, *dest, result, SUB);
+   CPU_8bitUpdateHalfCarry (cpu, *dest, result, SUB);
 
    (*dest)--;
+}
+
+void CPU_16bitADD (CPU cpu, word *dest, word *toAdd) {
+   int result;
+
+   CPU_clearSub (cpu);
+   CPU_clearCarry (cpu);
+   CPU_clearHalfCarry (cpu);
+
+   result = (int)*dest + (int)*toAdd;
+   if (result < 0 || result > 0xFFFF) CPU_setCarry (cpu);
+   CPU_16bitUpdateHalfCarry (cpu, *dest, result, ADD);
+
+   *dest += *toAdd; 
 }
 
 int CPU_NOP (CPU cpu) {
@@ -778,7 +803,7 @@ int CPU_LDHL_SP_n (CPU cpu) {
    
    CPU_clearFlags (cpu);
    if (result > 0xFFFF || result < 0) CPU_setCarry (cpu);
-   CPU_updateHalfCarry (cpu, REG_SP, REG_SP+immediate, ADD);
+   CPU_8bitUpdateHalfCarry (cpu, REG_SP, REG_SP+immediate, ADD);
 
    REG_HL = REG_SP+immediate;
    REG_PC += 2;
@@ -1430,4 +1455,98 @@ int CPU_DEC_aHL (CPU cpu) {
 
    REG_PC++;
    return 12;
+}
+
+int CPU_ADD_HL_BC (CPU cpu) {
+   CPU_16bitADD (cpu, &REG_HL, &REG_BC);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_ADD_HL_DE (CPU cpu) {
+   CPU_16bitADD (cpu, &REG_HL, &REG_DE);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_ADD_HL_HL (CPU cpu) {
+   CPU_16bitADD (cpu, &REG_HL, &REG_HL);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_ADD_HL_SP (CPU cpu) {
+   CPU_16bitADD (cpu, &REG_HL, &REG_SP);
+   REG_PC++;
+   return 8;
+}
+
+int CPU_ADD_SP_n (CPU cpu) {
+   int result;
+   signed_byte immediate;
+   MMU mmu = GB_getMMU (cpu->gb);
+
+   CPU_clearFlags (cpu);
+
+   immediate = (signed_byte)MMU_readByte (mmu, REG_PC + 1); 
+   
+   result = (int)REG_SP + (int)immediate;
+   if (result < 0 || result > 0xFFFF) CPU_setCarry (cpu);
+
+   if (immediate >= 0) {
+      CPU_16bitUpdateHalfCarry (cpu, REG_SP, result, ADD);
+   } else {
+      CPU_16bitUpdateHalfCarry (cpu, REG_SP, result, SUB);
+   }
+
+   REG_PC += 2;
+   return 16;
+}
+
+int CPU_INC_BC (CPU cpu) {
+   REG_BC++;
+   REG_PC++;
+   return 8;
+}
+
+int CPU_INC_DE (CPU cpu) {
+   REG_DE++;
+   REG_PC++;
+   return 8;
+}
+
+int CPU_INC_HL (CPU cpu) {
+   REG_HL++;
+   REG_PC++;
+   return 8;
+}
+
+int CPU_INC_SP (CPU cpu) {
+   REG_SP++;
+   REG_PC++;
+   return 8;
+}
+
+int CPU_DEC_BC (CPU cpu) {
+   REG_BC--;
+   REG_PC++;
+   return 8;
+}
+
+int CPU_DEC_DE (CPU cpu) {
+   REG_DE--;
+   REG_PC++;
+   return 8;
+}
+
+int CPU_DEC_HL (CPU cpu) {
+   REG_HL--;
+   REG_PC++;
+   return 8;
+}
+
+int CPU_DEC_SP (CPU cpu) {
+   REG_SP--;
+   REG_PC++;
+   return 8;
 }

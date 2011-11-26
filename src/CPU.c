@@ -459,4 +459,15 @@ void CPU_initInstructionMap () {
    instructionMap[0x25] = &CPU_DEC_H;
    instructionMap[0x2D] = &CPU_DEC_L;
    instructionMap[0x35] = &CPU_DEC_aHL;
+
+   instructionMap[0x09] = &CPU_ADD_HL_BC;
+   instructionMap[0x19] = &CPU_ADD_HL_DE;
+   instructionMap[0x29] = &CPU_ADD_HL_HL;
+   instructionMap[0x39] = &CPU_ADD_HL_SP;
+   instructionMap[0xE8] = &CPU_ADD_SP_n;
+
+   instructionMap[0x03] = &CPU_INC_BC;
+   instructionMap[0x13] = &CPU_INC_DE;
+   instructionMap[0x23] = &CPU_INC_HL;
+   instructionMap[0x33] = &CPU_INC_SP;
 }

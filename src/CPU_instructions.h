@@ -218,4 +218,21 @@ int CPU_DEC_E (CPU cpu);
 int CPU_DEC_H (CPU cpu);
 int CPU_DEC_L (CPU cpu);
 int CPU_DEC_aHL (CPU cpu);
+
+int CPU_ADD_HL_BC (CPU cpu);
+int CPU_ADD_HL_DE (CPU cpu);
+int CPU_ADD_HL_HL (CPU cpu);
+int CPU_ADD_HL_SP (CPU cpu);
+int CPU_ADD_SP_n (CPU cpu);
+
+int CPU_INC_BC (CPU cpu);
+int CPU_INC_DE (CPU cpu);
+int CPU_INC_HL (CPU cpu);
+int CPU_INC_SP (CPU cpu);
+
+int CPU_DEC_BC (CPU cpu);
+int CPU_DEC_DE (CPU cpu);
+int CPU_DEC_HL (CPU cpu);
+int CPU_DEC_SP (CPU cpu);
+
 #endif
