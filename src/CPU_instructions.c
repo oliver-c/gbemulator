@@ -1680,3 +1680,57 @@ int CPU_SWAP_aHL (CPU cpu) {
    REG_PC++;
    return 16;
 }
+
+int CPU_RLCA (CPU cpu) {
+   CPU_clearFlags (cpu);
+   if (testBit(REG_A, 7)) CPU_setCarry (cpu);
+
+   REG_A <<= 1;
+   if (REG_A == 0) CPU_setZero (cpu);
+
+   REG_PC++;
+   return 4;
+}
+
+int CPU_RLA (CPU cpu) {
+   bool isCarryOriginallySet = FALSE;
+
+   isCarryOriginallySet = CPU_isCarrySet (cpu);
+   CPU_clearFlags (cpu);
+
+   if (testBit(REG_A, 7)) CPU_setCarry (cpu);
+
+   REG_A <<= 1;
+   if (isCarryOriginallySet) CPU_setBit (&REG_A, 0);
+   if (REG_A == 0) CPU_setZero (cpu);
+
+   REG_PC++;
+   return 4;
+}
+
+int CPU_RRCA (CPU cpu) {
+   CPU_clearFlags (cpu);
+   if (testBit(REG_A, 0)) CPU_setCarry (cpu);
+
+   REG_A >>= 1;
+   if (REG_A == 0) CPU_setZero (cpu);
+
+   REG_PC++;
+   return 4;
+}
+
+int CPU_RRA (CPU cpu) {
+   bool isCarryOriginallySet = FALSE;
+
+   isCarryOriginallySet = CPU_isCarrySet (cpu);
+   CPU_clearFlags (cpu);
+
+   if (testBit(REG_A, 0)) CPU_setCarry (cpu);
+
+   REG_A >>= 1;
+   if (isCarryOriginallySet) CPU_setBit (&REG_A, 7);
+   if (REG_A == 0) CPU_setZero (cpu);
+
+   REG_PC++;
+   return 4;
+}

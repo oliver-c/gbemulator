@@ -493,6 +493,11 @@ void CPU_initInstructionMap () {
    instructionMap[0xF3] = &CPU_DI;
    instructionMap[0xFB] = &CPU_EI;
 
+   instructionMap[0x07] = &CPU_RLCA;
+   instructionMap[0x17] = &CPU_RLA;
+   instructionMap[0x0F] = &CPU_RRCA;
+   instructionMap[0x1F] = &CPU_RRA;
+
    instructionMapCB[0x37] = &CPU_SWAP_A; 
    instructionMapCB[0x30] = &CPU_SWAP_B; 
    instructionMapCB[0x31] = &CPU_SWAP_C; 

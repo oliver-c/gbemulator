@@ -254,4 +254,9 @@ int CPU_SWAP_H (CPU cpu);
 int CPU_SWAP_L (CPU cpu);
 int CPU_SWAP_aHL (CPU cpu);
 
+int CPU_RLCA (CPU cpu);
+int CPU_RLA (CPU cpu);
+int CPU_RRCA (CPU cpu);
+int CPU_RRA (CPU cpu);
+
 #endif
