@@ -245,6 +245,11 @@ int CPU_STOP (CPU cpu);
 int CPU_DI (CPU cpu);
 int CPU_EI (CPU cpu);
 
+int CPU_RLCA (CPU cpu);
+int CPU_RLA (CPU cpu);
+int CPU_RRCA (CPU cpu);
+int CPU_RRA (CPU cpu);
+
 int CPU_SWAP_A (CPU cpu);
 int CPU_SWAP_B (CPU cpu);
 int CPU_SWAP_C (CPU cpu);
@@ -254,9 +259,39 @@ int CPU_SWAP_H (CPU cpu);
 int CPU_SWAP_L (CPU cpu);
 int CPU_SWAP_aHL (CPU cpu);
 
-int CPU_RLCA (CPU cpu);
-int CPU_RLA (CPU cpu);
-int CPU_RRCA (CPU cpu);
-int CPU_RRA (CPU cpu);
+int CPU_RLC_A (CPU cpu);
+int CPU_RLC_B (CPU cpu);
+int CPU_RLC_C (CPU cpu);
+int CPU_RLC_D (CPU cpu);
+int CPU_RLC_E (CPU cpu);
+int CPU_RLC_H (CPU cpu);
+int CPU_RLC_L (CPU cpu);
+int CPU_RLC_aHL (CPU cpu);
 
+int CPU_RL_A (CPU cpu);
+int CPU_RL_B (CPU cpu);
+int CPU_RL_C (CPU cpu);
+int CPU_RL_D (CPU cpu);
+int CPU_RL_E (CPU cpu);
+int CPU_RL_H (CPU cpu);
+int CPU_RL_L (CPU cpu);
+int CPU_RL_aHL (CPU cpu);
+
+int CPU_RRC_A (CPU cpu);
+int CPU_RRC_B (CPU cpu);
+int CPU_RRC_C (CPU cpu);
+int CPU_RRC_D (CPU cpu);
+int CPU_RRC_E (CPU cpu);
+int CPU_RRC_H (CPU cpu);
+int CPU_RRC_L (CPU cpu);
+int CPU_RRC_aHL (CPU cpu);
+
+int CPU_RR_A (CPU cpu);
+int CPU_RR_B (CPU cpu);
+int CPU_RR_C (CPU cpu);
+int CPU_RR_D (CPU cpu);
+int CPU_RR_E (CPU cpu);
+int CPU_RR_H (CPU cpu);
+int CPU_RR_L (CPU cpu);
+int CPU_RR_aHL (CPU cpu);
 #endif

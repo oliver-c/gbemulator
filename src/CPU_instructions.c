@@ -206,6 +206,50 @@ void CPU_8bitSWAP (CPU cpu, byte *dest) {
    if (*dest == 0) CPU_setZero (cpu);
 }
 
+void CPU_8bitRLC (CPU cpu, byte *dest) {
+   CPU_clearFlags (cpu);
+   if (testBit(*dest, 7)) CPU_setCarry (cpu);
+
+   *dest <<= 1;
+   if (CPU_isCarrySet(cpu)) setBit (dest, 0);
+   if (*dest == 0) CPU_setZero (cpu);
+}
+
+void CPU_8bitRL (CPU cpu, byte *dest) {
+   bool isCarryOriginallySet = FALSE;
+
+   isCarryOriginallySet = CPU_isCarrySet (cpu);
+   CPU_clearFlags (cpu);
+
+   if (testBit(*dest, 7)) CPU_setCarry (cpu);
+
+   *dest <<= 1;
+   if (isCarryOriginallySet) setBit (dest, 0);
+   if (*dest == 0) CPU_setZero (cpu);
+}
+
+void CPU_8bitRRC (CPU cpu, byte *dest) {
+   CPU_clearFlags (cpu);
+   if (testBit(*dest, 0)) CPU_setCarry (cpu);
+
+   *dest >>= 1;
+   if (CPU_isCarrySet(cpu)) setBit (dest, 7);
+   if (*dest == 0) CPU_setZero (cpu);
+}
+
+void CPU_8bitRR (CPU cpu, byte *dest) {
+   bool isCarryOriginallySet = FALSE;
+
+   isCarryOriginallySet = CPU_isCarrySet (cpu);
+   CPU_clearFlags (cpu);
+
+   if (testBit(*dest, 0)) CPU_setCarry (cpu);
+
+   *dest >>= 1;
+   if (isCarryOriginallySet) setBit (dest, 7);
+   if (*dest == 0) CPU_setZero (cpu);
+}
+
 int CPU_NOP (CPU cpu) {
    REG_PC++;
    return 4;
@@ -1627,6 +1671,29 @@ int CPU_EI (CPU cpu) {
    return 4;
 }
 
+int CPU_RLCA (CPU cpu) {
+   CPU_8bitRLC (cpu, &REG_A);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_RLA (CPU cpu) {
+   CPU_8bitRL (cpu, &REG_A);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_RRCA (CPU cpu) {
+   CPU_8bitRRC (cpu, &REG_A);
+   REG_PC++;
+   return 4;
+}
+
+int CPU_RRA (CPU cpu) {
+   CPU_8bitRR (cpu, &REG_A);
+   REG_PC++;
+   return 4;
+}
 
 int CPU_SWAP_A (CPU cpu) {
    CPU_8bitSWAP (cpu, &REG_A);
@@ -1682,58 +1749,218 @@ int CPU_SWAP_aHL (CPU cpu) {
    return 16;
 }
 
-int CPU_RLCA (CPU cpu) {
-   CPU_clearFlags (cpu);
-   if (testBit(REG_A, 7)) CPU_setCarry (cpu);
-
-   REG_A <<= 1;
-   if (CPU_isCarrySet(cpu)) setBit (&REG_A, 0);
-   if (REG_A == 0) CPU_setZero (cpu);
-
-   REG_PC++;
-   return 4;
+int CPU_RLC_A (CPU cpu) {
+   CPU_8bitRLC (cpu, &REG_A);
+   REG_PC += 2;
+   return 8;
 }
 
-int CPU_RLA (CPU cpu) {
-   bool isCarryOriginallySet = FALSE;
-
-   isCarryOriginallySet = CPU_isCarrySet (cpu);
-   CPU_clearFlags (cpu);
-
-   if (testBit(REG_A, 7)) CPU_setCarry (cpu);
-
-   REG_A <<= 1;
-   if (isCarryOriginallySet) setBit (&REG_A, 0);
-   if (REG_A == 0) CPU_setZero (cpu);
-
-   REG_PC++;
-   return 4;
+int CPU_RLC_B (CPU cpu) {
+   CPU_8bitRLC (cpu, &REG_B);
+   REG_PC += 2;
+   return 8;
 }
 
-int CPU_RRCA (CPU cpu) {
-   CPU_clearFlags (cpu);
-   if (testBit(REG_A, 0)) CPU_setCarry (cpu);
-
-   REG_A >>= 1;
-   if (CPU_isCarrySet(cpu)) setBit (&REG_A, 7);
-   if (REG_A == 0) CPU_setZero (cpu);
-
-   REG_PC++;
-   return 4;
+int CPU_RLC_C (CPU cpu) {
+   CPU_8bitRLC (cpu, &REG_C);
+   REG_PC += 2;
+   return 8;
 }
 
-int CPU_RRA (CPU cpu) {
-   bool isCarryOriginallySet = FALSE;
+int CPU_RLC_D (CPU cpu) {
+   CPU_8bitRLC (cpu, &REG_D);
+   REG_PC += 2;
+   return 8;
+}
 
-   isCarryOriginallySet = CPU_isCarrySet (cpu);
-   CPU_clearFlags (cpu);
+int CPU_RLC_E (CPU cpu) {
+   CPU_8bitRLC (cpu, &REG_E);
+   REG_PC += 2;
+   return 8;
+}
 
-   if (testBit(REG_A, 0)) CPU_setCarry (cpu);
+int CPU_RLC_H (CPU cpu) {
+   CPU_8bitRLC (cpu, &REG_H);
+   REG_PC += 2;
+   return 8;
+}
 
-   REG_A >>= 1;
-   if (isCarryOriginallySet) setBit (&REG_A, 7);
-   if (REG_A == 0) CPU_setZero (cpu);
+int CPU_RLC_L (CPU cpu) {
+   CPU_8bitRLC (cpu, &REG_L);
+   REG_PC += 2;
+   return 8;
+}
 
-   REG_PC++;
-   return 4;
+int CPU_RLC_aHL (CPU cpu) {
+   byte byteToRotate;
+   MMU mmu = GB_getMMU (cpu->gb);
+
+   byteToRotate = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRLC (cpu, &byteToRotate);
+   MMU_writeByte (mmu, REG_HL, byteToRotate);
+
+   REG_PC += 2;
+   return 16;
+}
+
+int CPU_RL_A (CPU cpu) {
+   CPU_8bitRL (cpu, &REG_A);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RL_B (CPU cpu) {
+   CPU_8bitRL (cpu, &REG_B);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RL_C (CPU cpu) {
+   CPU_8bitRL (cpu, &REG_C);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RL_D (CPU cpu) {
+   CPU_8bitRL (cpu, &REG_D);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RL_E (CPU cpu) {
+   CPU_8bitRL (cpu, &REG_E);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RL_H (CPU cpu) {
+   CPU_8bitRL (cpu, &REG_H);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RL_L (CPU cpu) {
+   CPU_8bitRL (cpu, &REG_L);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RL_aHL (CPU cpu) {
+   byte byteToRotate;
+   MMU mmu = GB_getMMU (cpu->gb);
+
+   byteToRotate = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRL (cpu, &byteToRotate);
+   MMU_writeByte (mmu, REG_HL, byteToRotate);
+
+   REG_PC += 2;
+   return 16;
+}
+
+int CPU_RRC_A (CPU cpu) {
+   CPU_8bitRRC (cpu, &REG_A);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RRC_B (CPU cpu) {
+   CPU_8bitRRC (cpu, &REG_B);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RRC_C (CPU cpu) {
+   CPU_8bitRRC (cpu, &REG_C);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RRC_D (CPU cpu) {
+   CPU_8bitRRC (cpu, &REG_D);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RRC_E (CPU cpu) {
+   CPU_8bitRRC (cpu, &REG_E);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RRC_H (CPU cpu) {
+   CPU_8bitRRC (cpu, &REG_H);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RRC_L (CPU cpu) {
+   CPU_8bitRRC (cpu, &REG_L);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RRC_aHL (CPU cpu) {
+   byte byteToRotate;
+   MMU mmu = GB_getMMU (cpu->gb);
+
+   byteToRotate = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRRC (cpu, &byteToRotate);
+   MMU_writeByte (mmu, REG_HL, byteToRotate);
+
+   REG_PC += 2;
+   return 16;
+}
+
+int CPU_RR_A (CPU cpu) {
+   CPU_8bitRR (cpu, &REG_A);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RR_B (CPU cpu) {
+   CPU_8bitRR (cpu, &REG_B);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RR_C (CPU cpu) {
+   CPU_8bitRR (cpu, &REG_C);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RR_D (CPU cpu) {
+   CPU_8bitRR (cpu, &REG_D);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RR_E (CPU cpu) {
+   CPU_8bitRR (cpu, &REG_E);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RR_H (CPU cpu) {
+   CPU_8bitRR (cpu, &REG_H);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RR_L (CPU cpu) {
+   CPU_8bitRR (cpu, &REG_L);
+   REG_PC += 2;
+   return 8;
+}
+
+int CPU_RR_aHL (CPU cpu) {
+   byte byteToRotate;
+   MMU mmu = GB_getMMU (cpu->gb);
+
+   byteToRotate = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRR (cpu, &byteToRotate);
+   MMU_writeByte (mmu, REG_HL, byteToRotate);
+
+   REG_PC += 2;
+   return 16;
 }

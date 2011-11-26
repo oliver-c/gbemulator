@@ -128,8 +128,7 @@ int CPU_step (CPU cpu) {
    /* Execute the instruction */
    if (opcode == 0xCB) {
       /* 0xCB prefixed instruction */
-      cpu->registers[PC].value++;
-      opcode = MMU_readByte (mmu, cpu->registers[PC].value);
+      opcode = MMU_readByte (mmu, cpu->registers[PC].value + 1);
       if (instructionMap[opcode] != NULL) 
          numCycles = instructionMapCB[opcode] (cpu);
    } else if (instructionMap[opcode] != NULL) {
@@ -506,4 +505,40 @@ void CPU_initInstructionMap () {
    instructionMapCB[0x34] = &CPU_SWAP_H; 
    instructionMapCB[0x35] = &CPU_SWAP_L; 
    instructionMapCB[0x36] = &CPU_SWAP_aHL; 
+
+   instructionMapCB[0x07] = &CPU_RLC_A;
+   instructionMapCB[0x00] = &CPU_RLC_B;
+   instructionMapCB[0x01] = &CPU_RLC_C;
+   instructionMapCB[0x02] = &CPU_RLC_D;
+   instructionMapCB[0x03] = &CPU_RLC_E;
+   instructionMapCB[0x04] = &CPU_RLC_H;
+   instructionMapCB[0x05] = &CPU_RLC_L;
+   instructionMapCB[0x06] = &CPU_RLC_aHL;
+
+   instructionMapCB[0x17] = &CPU_RL_A;
+   instructionMapCB[0x10] = &CPU_RL_B;
+   instructionMapCB[0x11] = &CPU_RL_C;
+   instructionMapCB[0x12] = &CPU_RL_D;
+   instructionMapCB[0x13] = &CPU_RL_E;
+   instructionMapCB[0x14] = &CPU_RL_H;
+   instructionMapCB[0x15] = &CPU_RL_L;
+   instructionMapCB[0x16] = &CPU_RL_aHL;
+
+   instructionMapCB[0x0F] = &CPU_RRC_A;
+   instructionMapCB[0x08] = &CPU_RRC_B;
+   instructionMapCB[0x09] = &CPU_RRC_C;
+   instructionMapCB[0x0A] = &CPU_RRC_D;
+   instructionMapCB[0x0B] = &CPU_RRC_E;
+   instructionMapCB[0x0C] = &CPU_RRC_H;
+   instructionMapCB[0x0D] = &CPU_RRC_L;
+   instructionMapCB[0x0E] = &CPU_RRC_aHL;
+
+   instructionMapCB[0x1F] = &CPU_RR_A;
+   instructionMapCB[0x18] = &CPU_RR_B;
+   instructionMapCB[0x19] = &CPU_RR_C;
+   instructionMapCB[0x1A] = &CPU_RR_D;
+   instructionMapCB[0x1B] = &CPU_RR_E;
+   instructionMapCB[0x1C] = &CPU_RR_H;
+   instructionMapCB[0x1D] = &CPU_RR_L;
+   instructionMapCB[0x1E] = &CPU_RR_aHL;
 }
