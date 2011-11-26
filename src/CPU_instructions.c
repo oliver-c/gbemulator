@@ -56,7 +56,7 @@ void CPU_8bitADD (CPU cpu, byte *dest, byte *toAdd) {
 
    CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
-   if (result > 0xFF || result < 0) CPU_setCarry (cpu);
+   if (result < 0 || result > 0xFF) CPU_setCarry (cpu);
    CPU_8bitUpdateHalfCarry (cpu, *dest, result, ADD);
 
    *dest += *toAdd;
@@ -72,7 +72,7 @@ void CPU_8bitADC (CPU cpu, byte *dest, byte *toAdd) {
 
    CPU_clearFlags (cpu);
    if (result == 0) CPU_setZero (cpu);
-   if (result > 0xFF || result < 0) CPU_setCarry (cpu);
+   if (result < 0 || result > 0xFF) CPU_setCarry (cpu);
    CPU_8bitUpdateHalfCarry (cpu, *dest, result, ADD);
 
    *dest += *toAdd + C;
@@ -87,7 +87,7 @@ void CPU_8bitSUB (CPU cpu, byte *dest, byte *toSub) {
    result = (int)*dest - (int)*toSub;
 
    if (result == 0) CPU_setZero (cpu);
-   if (result > 0xFF || result < 0) CPU_setCarry (cpu);
+   if (result < 0 || result > 0xFF) CPU_setCarry (cpu);
    CPU_8bitUpdateHalfCarry (cpu, *dest, result, SUB);
 
    *dest -= *toSub;
@@ -105,7 +105,7 @@ void CPU_8bitSBC (CPU cpu, byte *dest, byte *toSub) {
    result = (int)*dest - (int)*toSub - C;
 
    if (result == 0) CPU_setZero (cpu);
-   if (result > 0xFF || result < 0) CPU_setCarry (cpu);
+   if (result < 0 || result > 0xFF) CPU_setCarry (cpu);
    CPU_8bitUpdateHalfCarry (cpu, *dest, result, SUB);
 
    *dest -= *toSub + C;
@@ -145,7 +145,7 @@ void CPU_8bitCP (CPU cpu, byte *dest, byte *toCp) {
    result = (int)*dest - (int)*toCp;
 
    if (result == 0) CPU_setZero (cpu);
-   if (result > 0xFF || result < 0) CPU_setCarry (cpu);
+   if (result < 0 || result > 0xFF) CPU_setCarry (cpu);
    CPU_8bitUpdateHalfCarry (cpu, *dest, result, SUB);
 }
 
@@ -812,7 +812,7 @@ int CPU_LDHL_SP_n (CPU cpu) {
    result = (int)REG_SP + (int)immediate;
    
    CPU_clearFlags (cpu);
-   if (result > 0xFFFF || result < 0) CPU_setCarry (cpu);
+   if (result < 0 || result > 0xFFFF) CPU_setCarry (cpu);
    CPU_8bitUpdateHalfCarry (cpu, REG_SP, REG_SP+immediate, ADD);
 
    REG_HL = REG_SP+immediate;
