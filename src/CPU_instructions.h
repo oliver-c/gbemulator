@@ -109,4 +109,17 @@ int CPU_LD_HL_nn (CPU cpu);
 int CPU_LD_SP_nn (CPU cpu);
 
 int CPU_LD_SP_HL (CPU cpu);
+int CPU_LDHL_SP_n (CPU cpu);
+int CPU_LD_ann_SP (CPU cpu);
+
+int CPU_PUSH_AF (CPU cpu);
+int CPU_PUSH_BC (CPU cpu);
+int CPU_PUSH_DE (CPU cpu);
+int CPU_PUSH_HL (CPU cpu);
+
+int CPU_POP_AF (CPU cpu);
+int CPU_POP_BC (CPU cpu);
+int CPU_POP_DE (CPU cpu);
+int CPU_POP_HL (CPU cpu);
+
 #endif

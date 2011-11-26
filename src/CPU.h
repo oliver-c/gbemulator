@@ -6,8 +6,13 @@
 
 #include "types.h"
 
-#define NUM_REGISTERS 6
-#define CLOCK_SPEED 4194304
+#define NUM_REGISTERS      6
+#define CLOCK_SPEED        4194304
+
+#define FLAG_ZERO_BIT      7
+#define FLAG_SUB_BIT       6
+#define FLAG_HALFCARRY_BIT 5
+#define FLAG_CARRY_BIT     4
 
 typedef union {
    word value;
@@ -69,5 +74,16 @@ bool CPU_getIME (CPU cpu);
 /* Executes the interrupt, returning the number of cycles it took 
    to start the interrupt */
 int CPU_executeInterrupt (CPU cpu, interrupt type);
+
+/* Sets/clears the CPU flags */
+void CPU_setCarry (CPU cpu);
+void CPU_setZero (CPU cpu);
+void CPU_setHalfCarry (CPU cpu);
+void CPU_setSub (CPU cpu);
+
+void CPU_clearCarry (CPU cpu);
+void CPU_clearZero (CPU cpu);
+void CPU_clearHalfCarry (CPU cpu);
+void CPU_clearSub (CPU cpu);
 
 #endif

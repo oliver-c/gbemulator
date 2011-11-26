@@ -183,6 +183,46 @@ int CPU_executeInterrupt (CPU cpu, interrupt type) {
    return cycles;
 }
 
+void CPU_setCarry (CPU cpu) {
+   (cpu->registers[AF].bytes.low) |= (1 << FLAG_CARRY_BIT);
+}
+
+void CPU_setZero (CPU cpu) {
+   (cpu->registers[AF].bytes.low) |= (1 << FLAG_ZERO_BIT);
+}
+
+void CPU_setHalfCarry (CPU cpu) {
+   (cpu->registers[AF].bytes.low) |= (1 << FLAG_HALFCARRY_BIT);
+}
+
+void CPU_setSub (CPU cpu) {
+   (cpu->registers[AF].bytes.low) |= (1 << FLAG_SUB_BIT);
+}
+
+void CPU_clearCarry (CPU cpu) {
+   if (((cpu->registers[AF].bytes.low) & (1<<FLAG_CARRY_BIT))) {
+      (cpu->registers[AF].bytes.low) ^= (1<<FLAG_CARRY_BIT);
+   }
+}
+
+void CPU_clearZero (CPU cpu) {
+   if (((cpu->registers[AF].bytes.low) & (1<<FLAG_ZERO_BIT))) {
+      (cpu->registers[AF].bytes.low) ^= (1<<FLAG_ZERO_BIT);
+   }
+}
+
+void CPU_clearHalfCarry (CPU cpu) {
+   if (((cpu->registers[AF].bytes.low) & (1<<FLAG_HALFCARRY_BIT))) {
+      (cpu->registers[AF].bytes.low) ^= (1<<FLAG_HALFCARRY_BIT);
+   }
+}
+
+void CPU_clearSub (CPU cpu) {
+   if (((cpu->registers[AF].bytes.low) & (1<<FLAG_SUB_BIT))) {
+      (cpu->registers[AF].bytes.low) ^= (1<<FLAG_SUB_BIT);
+   }
+}
+
 void CPU_initInstructionMap () {
    instructionMap[0x00] = &CPU_NOP;
 
@@ -290,4 +330,16 @@ void CPU_initInstructionMap () {
    instructionMap[0x31] = &CPU_LD_SP_nn;
 
    instructionMap[0xF9] = &CPU_LD_SP_HL;
+   instructionMap[0xF8] = &CPU_LDHL_SP_n;
+   instructionMap[0x08] = &CPU_LD_ann_SP;
+
+   instructionMap[0xF5] = &CPU_PUSH_AF;
+   instructionMap[0xC5] = &CPU_PUSH_BC;
+   instructionMap[0xD5] = &CPU_PUSH_DE;
+   instructionMap[0xE5] = &CPU_PUSH_HL;
+
+   instructionMap[0xF1] = &CPU_POP_AF;
+   instructionMap[0xC1] = &CPU_POP_BC;
+   instructionMap[0xD1] = &CPU_POP_DE;
+   instructionMap[0xE1] = &CPU_POP_HL;
 }

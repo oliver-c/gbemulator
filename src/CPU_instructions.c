@@ -623,3 +623,101 @@ int CPU_LD_SP_HL (CPU cpu) {
    REG_PC++;
    return 8;
 }
+
+int CPU_LDHL_SP_n (CPU cpu) {
+   int result;
+   signed_byte immediate;
+   MMU mmu = GB_getMMU (cpu->gb);
+
+   immediate = (signed_byte)MMU_readByte (mmu, REG_PC+1);
+   REG_HL = REG_SP+immediate;
+
+   CPU_clearZero (cpu);
+   CPU_clearSub (cpu);
+   CPU_clearHalfCarry (cpu);
+   CPU_clearCarry (cpu);
+
+   /* Check for overflow or underflow */
+   result = (int)REG_SP + (int)immediate;
+   if (result > 0xFFFF || result < 0) {
+      CPU_setCarry (cpu);
+   }
+   /* TODO: Half Carry flag? */
+
+   REG_PC += 2;
+   return 12;
+}
+
+int CPU_LD_ann_SP (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   word address = MMU_readWord (mmu, REG_PC + 1);
+   MMU_writeWord (mmu, address, REG_SP);
+
+   REG_PC += 3;
+
+   return 20;
+}
+
+int CPU_PUSH_AF (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_SP -= 2;
+   MMU_writeByte (mmu, REG_SP, REG_AF);
+   REG_PC++;
+   return 16;
+}
+
+int CPU_PUSH_BC (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_SP -= 2;
+   MMU_writeByte (mmu, REG_SP, REG_BC);
+   REG_PC++;
+   return 16;
+}
+
+int CPU_PUSH_DE (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_SP -= 2;
+   MMU_writeByte (mmu, REG_SP, REG_DE);
+   REG_PC++;
+   return 16;
+}
+
+int CPU_PUSH_HL (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_SP -= 2;
+   MMU_writeByte (mmu, REG_SP, REG_HL);
+   REG_PC++;
+   return 16;
+}
+
+int CPU_POP_AF (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_AF = MMU_readByte (mmu, REG_SP);
+   REG_SP += 2;
+   REG_PC++;
+   return 12;
+}
+
+int CPU_POP_BC (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_BC = MMU_readByte (mmu, REG_SP);
+   REG_SP += 2;
+   REG_PC++;
+   return 12;
+}
+
+int CPU_POP_DE (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_DE = MMU_readByte (mmu, REG_SP);
+   REG_SP += 2;
+   REG_PC++;
+   return 12;
+}
+
+int CPU_POP_HL (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_HL = MMU_readByte (mmu, REG_SP);
+   REG_SP += 2;
+   REG_PC++;
+   return 12;
+}
