@@ -1686,6 +1686,7 @@ int CPU_RLCA (CPU cpu) {
    if (testBit(REG_A, 7)) CPU_setCarry (cpu);
 
    REG_A <<= 1;
+   if (CPU_isCarrySet(cpu)) setBit (&REG_A, 0);
    if (REG_A == 0) CPU_setZero (cpu);
 
    REG_PC++;
@@ -1713,6 +1714,7 @@ int CPU_RRCA (CPU cpu) {
    if (testBit(REG_A, 0)) CPU_setCarry (cpu);
 
    REG_A >>= 1;
+   if (CPU_isCarrySet(cpu)) setBit (&REG_A, 7);
    if (REG_A == 0) CPU_setZero (cpu);
 
    REG_PC++;
