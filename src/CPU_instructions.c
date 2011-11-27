@@ -276,6 +276,22 @@ void CPU_8bitSRL (CPU cpu, byte *dest) {
    if (*dest == 0) CPU_setZero (cpu);
 }
 
+void CPU_8bitBIT (CPU cpu, byte *dest, int bit) {
+   CPU_clearZero (cpu);
+   CPU_clearSub (cpu);
+   CPU_setHalfCarry (cpu);
+
+   if (!testBit(*dest, bit)) CPU_setZero (cpu);
+}
+
+void CPU_8bitSET (CPU cpu, byte *dest, int bit) {
+   setBit (dest, bit); 
+}
+
+void CPU_8bitRES (CPU cpu, byte *dest, int bit) {
+   clearBit (dest, bit);
+}
+
 int CPU_NOP (CPU cpu) {
    REG_PC++;
    return 4;
@@ -2152,3 +2168,407 @@ int CPU_SRL_aHL (CPU cpu) {
    REG_PC += 2;
    return 16;
 }
+
+int CPU_BIT_0_A (CPU cpu) {CPU_8bitBIT(cpu, &REG_A, 0); REG_PC += 2; return 8;}
+int CPU_BIT_0_B (CPU cpu) {CPU_8bitBIT(cpu, &REG_B, 0); REG_PC += 2; return 8;}
+int CPU_BIT_0_C (CPU cpu) {CPU_8bitBIT(cpu, &REG_C, 0); REG_PC += 2; return 8;}
+int CPU_BIT_0_D (CPU cpu) {CPU_8bitBIT(cpu, &REG_D, 0); REG_PC += 2; return 8;}
+int CPU_BIT_0_E (CPU cpu) {CPU_8bitBIT(cpu, &REG_E, 0); REG_PC += 2; return 8;}
+int CPU_BIT_0_H (CPU cpu) {CPU_8bitBIT(cpu, &REG_H, 0); REG_PC += 2; return 8;}
+int CPU_BIT_0_L (CPU cpu) {CPU_8bitBIT(cpu, &REG_L, 0); REG_PC += 2; return 8;}
+
+int CPU_BIT_0_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitBIT(cpu, &byteToTest, 0);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_BIT_1_A (CPU cpu) {CPU_8bitBIT(cpu, &REG_A, 1); REG_PC += 2; return 8;}
+int CPU_BIT_1_B (CPU cpu) {CPU_8bitBIT(cpu, &REG_B, 1); REG_PC += 2; return 8;}
+int CPU_BIT_1_C (CPU cpu) {CPU_8bitBIT(cpu, &REG_C, 1); REG_PC += 2; return 8;}
+int CPU_BIT_1_D (CPU cpu) {CPU_8bitBIT(cpu, &REG_D, 1); REG_PC += 2; return 8;}
+int CPU_BIT_1_E (CPU cpu) {CPU_8bitBIT(cpu, &REG_E, 1); REG_PC += 2; return 8;}
+int CPU_BIT_1_H (CPU cpu) {CPU_8bitBIT(cpu, &REG_H, 1); REG_PC += 2; return 8;}
+int CPU_BIT_1_L (CPU cpu) {CPU_8bitBIT(cpu, &REG_L, 1); REG_PC += 2; return 8;}
+
+int CPU_BIT_1_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitBIT(cpu, &byteToTest, 1);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_BIT_2_A (CPU cpu) {CPU_8bitBIT(cpu, &REG_A, 2); REG_PC += 2; return 8;}
+int CPU_BIT_2_B (CPU cpu) {CPU_8bitBIT(cpu, &REG_B, 2); REG_PC += 2; return 8;}
+int CPU_BIT_2_C (CPU cpu) {CPU_8bitBIT(cpu, &REG_C, 2); REG_PC += 2; return 8;}
+int CPU_BIT_2_D (CPU cpu) {CPU_8bitBIT(cpu, &REG_D, 2); REG_PC += 2; return 8;}
+int CPU_BIT_2_E (CPU cpu) {CPU_8bitBIT(cpu, &REG_E, 2); REG_PC += 2; return 8;}
+int CPU_BIT_2_H (CPU cpu) {CPU_8bitBIT(cpu, &REG_H, 2); REG_PC += 2; return 8;}
+int CPU_BIT_2_L (CPU cpu) {CPU_8bitBIT(cpu, &REG_L, 2); REG_PC += 2; return 8;}
+
+int CPU_BIT_2_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitBIT(cpu, &byteToTest, 2);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_BIT_3_A (CPU cpu) {CPU_8bitBIT(cpu, &REG_A, 3); REG_PC += 2; return 8;}
+int CPU_BIT_3_B (CPU cpu) {CPU_8bitBIT(cpu, &REG_B, 3); REG_PC += 2; return 8;}
+int CPU_BIT_3_C (CPU cpu) {CPU_8bitBIT(cpu, &REG_C, 3); REG_PC += 2; return 8;}
+int CPU_BIT_3_D (CPU cpu) {CPU_8bitBIT(cpu, &REG_D, 3); REG_PC += 2; return 8;}
+int CPU_BIT_3_E (CPU cpu) {CPU_8bitBIT(cpu, &REG_E, 3); REG_PC += 2; return 8;}
+int CPU_BIT_3_H (CPU cpu) {CPU_8bitBIT(cpu, &REG_H, 3); REG_PC += 2; return 8;}
+int CPU_BIT_3_L (CPU cpu) {CPU_8bitBIT(cpu, &REG_L, 3); REG_PC += 2; return 8;}
+
+int CPU_BIT_3_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitBIT(cpu, &byteToTest, 3);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_BIT_4_A (CPU cpu) {CPU_8bitBIT(cpu, &REG_A, 4); REG_PC += 2; return 8;}
+int CPU_BIT_4_B (CPU cpu) {CPU_8bitBIT(cpu, &REG_B, 4); REG_PC += 2; return 8;}
+int CPU_BIT_4_C (CPU cpu) {CPU_8bitBIT(cpu, &REG_C, 4); REG_PC += 2; return 8;}
+int CPU_BIT_4_D (CPU cpu) {CPU_8bitBIT(cpu, &REG_D, 4); REG_PC += 2; return 8;}
+int CPU_BIT_4_E (CPU cpu) {CPU_8bitBIT(cpu, &REG_E, 4); REG_PC += 2; return 8;}
+int CPU_BIT_4_H (CPU cpu) {CPU_8bitBIT(cpu, &REG_H, 4); REG_PC += 2; return 8;}
+int CPU_BIT_4_L (CPU cpu) {CPU_8bitBIT(cpu, &REG_L, 4); REG_PC += 2; return 8;}
+
+int CPU_BIT_4_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitBIT(cpu, &byteToTest, 4);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_BIT_5_A (CPU cpu) {CPU_8bitBIT(cpu, &REG_A, 5); REG_PC += 2; return 8;}
+int CPU_BIT_5_B (CPU cpu) {CPU_8bitBIT(cpu, &REG_B, 5); REG_PC += 2; return 8;}
+int CPU_BIT_5_C (CPU cpu) {CPU_8bitBIT(cpu, &REG_C, 5); REG_PC += 2; return 8;}
+int CPU_BIT_5_D (CPU cpu) {CPU_8bitBIT(cpu, &REG_D, 5); REG_PC += 2; return 8;}
+int CPU_BIT_5_E (CPU cpu) {CPU_8bitBIT(cpu, &REG_E, 5); REG_PC += 2; return 8;}
+int CPU_BIT_5_H (CPU cpu) {CPU_8bitBIT(cpu, &REG_H, 5); REG_PC += 2; return 8;}
+int CPU_BIT_5_L (CPU cpu) {CPU_8bitBIT(cpu, &REG_L, 5); REG_PC += 2; return 8;}
+
+int CPU_BIT_5_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitBIT(cpu, &byteToTest, 5);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_BIT_6_A (CPU cpu) {CPU_8bitBIT(cpu, &REG_A, 6); REG_PC += 2; return 8;}
+int CPU_BIT_6_B (CPU cpu) {CPU_8bitBIT(cpu, &REG_B, 6); REG_PC += 2; return 8;}
+int CPU_BIT_6_C (CPU cpu) {CPU_8bitBIT(cpu, &REG_C, 6); REG_PC += 2; return 8;}
+int CPU_BIT_6_D (CPU cpu) {CPU_8bitBIT(cpu, &REG_D, 6); REG_PC += 2; return 8;}
+int CPU_BIT_6_E (CPU cpu) {CPU_8bitBIT(cpu, &REG_E, 6); REG_PC += 2; return 8;}
+int CPU_BIT_6_H (CPU cpu) {CPU_8bitBIT(cpu, &REG_H, 6); REG_PC += 2; return 8;}
+int CPU_BIT_6_L (CPU cpu) {CPU_8bitBIT(cpu, &REG_L, 6); REG_PC += 2; return 8;}
+
+int CPU_BIT_6_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitBIT(cpu, &byteToTest, 6);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_BIT_7_A (CPU cpu) {CPU_8bitBIT(cpu, &REG_A, 7); REG_PC += 2; return 8;}
+int CPU_BIT_7_B (CPU cpu) {CPU_8bitBIT(cpu, &REG_B, 7); REG_PC += 2; return 8;}
+int CPU_BIT_7_C (CPU cpu) {CPU_8bitBIT(cpu, &REG_C, 7); REG_PC += 2; return 8;}
+int CPU_BIT_7_D (CPU cpu) {CPU_8bitBIT(cpu, &REG_D, 7); REG_PC += 2; return 8;}
+int CPU_BIT_7_E (CPU cpu) {CPU_8bitBIT(cpu, &REG_E, 7); REG_PC += 2; return 8;}
+int CPU_BIT_7_H (CPU cpu) {CPU_8bitBIT(cpu, &REG_H, 7); REG_PC += 2; return 8;}
+int CPU_BIT_7_L (CPU cpu) {CPU_8bitBIT(cpu, &REG_L, 7); REG_PC += 2; return 8;}
+
+int CPU_BIT_7_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitBIT(cpu, &byteToTest, 7);
+   REG_PC += 2; 
+   return 16;
+}
+
+int CPU_RES_0_A (CPU cpu) {CPU_8bitRES(cpu, &REG_A, 0); REG_PC += 2; return 8;}
+int CPU_RES_0_B (CPU cpu) {CPU_8bitRES(cpu, &REG_B, 0); REG_PC += 2; return 8;}
+int CPU_RES_0_C (CPU cpu) {CPU_8bitRES(cpu, &REG_C, 0); REG_PC += 2; return 8;}
+int CPU_RES_0_D (CPU cpu) {CPU_8bitRES(cpu, &REG_D, 0); REG_PC += 2; return 8;}
+int CPU_RES_0_E (CPU cpu) {CPU_8bitRES(cpu, &REG_E, 0); REG_PC += 2; return 8;}
+int CPU_RES_0_H (CPU cpu) {CPU_8bitRES(cpu, &REG_H, 0); REG_PC += 2; return 8;}
+int CPU_RES_0_L (CPU cpu) {CPU_8bitRES(cpu, &REG_L, 0); REG_PC += 2; return 8;}
+
+int CPU_RES_0_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRES(cpu, &byteToTest, 0);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_RES_1_A (CPU cpu) {CPU_8bitRES(cpu, &REG_A, 1); REG_PC += 2; return 8;}
+int CPU_RES_1_B (CPU cpu) {CPU_8bitRES(cpu, &REG_B, 1); REG_PC += 2; return 8;}
+int CPU_RES_1_C (CPU cpu) {CPU_8bitRES(cpu, &REG_C, 1); REG_PC += 2; return 8;}
+int CPU_RES_1_D (CPU cpu) {CPU_8bitRES(cpu, &REG_D, 1); REG_PC += 2; return 8;}
+int CPU_RES_1_E (CPU cpu) {CPU_8bitRES(cpu, &REG_E, 1); REG_PC += 2; return 8;}
+int CPU_RES_1_H (CPU cpu) {CPU_8bitRES(cpu, &REG_H, 1); REG_PC += 2; return 8;}
+int CPU_RES_1_L (CPU cpu) {CPU_8bitRES(cpu, &REG_L, 1); REG_PC += 2; return 8;}
+
+int CPU_RES_1_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRES(cpu, &byteToTest, 1);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_RES_2_A (CPU cpu) {CPU_8bitRES(cpu, &REG_A, 2); REG_PC += 2; return 8;}
+int CPU_RES_2_B (CPU cpu) {CPU_8bitRES(cpu, &REG_B, 2); REG_PC += 2; return 8;}
+int CPU_RES_2_C (CPU cpu) {CPU_8bitRES(cpu, &REG_C, 2); REG_PC += 2; return 8;}
+int CPU_RES_2_D (CPU cpu) {CPU_8bitRES(cpu, &REG_D, 2); REG_PC += 2; return 8;}
+int CPU_RES_2_E (CPU cpu) {CPU_8bitRES(cpu, &REG_E, 2); REG_PC += 2; return 8;}
+int CPU_RES_2_H (CPU cpu) {CPU_8bitRES(cpu, &REG_H, 2); REG_PC += 2; return 8;}
+int CPU_RES_2_L (CPU cpu) {CPU_8bitRES(cpu, &REG_L, 2); REG_PC += 2; return 8;}
+
+int CPU_RES_2_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRES(cpu, &byteToTest, 2);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_RES_3_A (CPU cpu) {CPU_8bitRES(cpu, &REG_A, 3); REG_PC += 2; return 8;}
+int CPU_RES_3_B (CPU cpu) {CPU_8bitRES(cpu, &REG_B, 3); REG_PC += 2; return 8;}
+int CPU_RES_3_C (CPU cpu) {CPU_8bitRES(cpu, &REG_C, 3); REG_PC += 2; return 8;}
+int CPU_RES_3_D (CPU cpu) {CPU_8bitRES(cpu, &REG_D, 3); REG_PC += 2; return 8;}
+int CPU_RES_3_E (CPU cpu) {CPU_8bitRES(cpu, &REG_E, 3); REG_PC += 2; return 8;}
+int CPU_RES_3_H (CPU cpu) {CPU_8bitRES(cpu, &REG_H, 3); REG_PC += 2; return 8;}
+int CPU_RES_3_L (CPU cpu) {CPU_8bitRES(cpu, &REG_L, 3); REG_PC += 2; return 8;}
+
+int CPU_RES_3_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRES(cpu, &byteToTest, 3);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_RES_4_A (CPU cpu) {CPU_8bitRES(cpu, &REG_A, 4); REG_PC += 2; return 8;}
+int CPU_RES_4_B (CPU cpu) {CPU_8bitRES(cpu, &REG_B, 4); REG_PC += 2; return 8;}
+int CPU_RES_4_C (CPU cpu) {CPU_8bitRES(cpu, &REG_C, 4); REG_PC += 2; return 8;}
+int CPU_RES_4_D (CPU cpu) {CPU_8bitRES(cpu, &REG_D, 4); REG_PC += 2; return 8;}
+int CPU_RES_4_E (CPU cpu) {CPU_8bitRES(cpu, &REG_E, 4); REG_PC += 2; return 8;}
+int CPU_RES_4_H (CPU cpu) {CPU_8bitRES(cpu, &REG_H, 4); REG_PC += 2; return 8;}
+int CPU_RES_4_L (CPU cpu) {CPU_8bitRES(cpu, &REG_L, 4); REG_PC += 2; return 8;}
+
+int CPU_RES_4_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRES(cpu, &byteToTest, 4);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_RES_5_A (CPU cpu) {CPU_8bitRES(cpu, &REG_A, 5); REG_PC += 2; return 8;}
+int CPU_RES_5_B (CPU cpu) {CPU_8bitRES(cpu, &REG_B, 5); REG_PC += 2; return 8;}
+int CPU_RES_5_C (CPU cpu) {CPU_8bitRES(cpu, &REG_C, 5); REG_PC += 2; return 8;}
+int CPU_RES_5_D (CPU cpu) {CPU_8bitRES(cpu, &REG_D, 5); REG_PC += 2; return 8;}
+int CPU_RES_5_E (CPU cpu) {CPU_8bitRES(cpu, &REG_E, 5); REG_PC += 2; return 8;}
+int CPU_RES_5_H (CPU cpu) {CPU_8bitRES(cpu, &REG_H, 5); REG_PC += 2; return 8;}
+int CPU_RES_5_L (CPU cpu) {CPU_8bitRES(cpu, &REG_L, 5); REG_PC += 2; return 8;}
+
+int CPU_RES_5_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRES(cpu, &byteToTest, 5);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_RES_6_A (CPU cpu) {CPU_8bitRES(cpu, &REG_A, 6); REG_PC += 2; return 8;}
+int CPU_RES_6_B (CPU cpu) {CPU_8bitRES(cpu, &REG_B, 6); REG_PC += 2; return 8;}
+int CPU_RES_6_C (CPU cpu) {CPU_8bitRES(cpu, &REG_C, 6); REG_PC += 2; return 8;}
+int CPU_RES_6_D (CPU cpu) {CPU_8bitRES(cpu, &REG_D, 6); REG_PC += 2; return 8;}
+int CPU_RES_6_E (CPU cpu) {CPU_8bitRES(cpu, &REG_E, 6); REG_PC += 2; return 8;}
+int CPU_RES_6_H (CPU cpu) {CPU_8bitRES(cpu, &REG_H, 6); REG_PC += 2; return 8;}
+int CPU_RES_6_L (CPU cpu) {CPU_8bitRES(cpu, &REG_L, 6); REG_PC += 2; return 8;}
+
+int CPU_RES_6_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRES(cpu, &byteToTest, 6);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_RES_7_A (CPU cpu) {CPU_8bitRES(cpu, &REG_A, 7); REG_PC += 2; return 8;}
+int CPU_RES_7_B (CPU cpu) {CPU_8bitRES(cpu, &REG_B, 7); REG_PC += 2; return 8;}
+int CPU_RES_7_C (CPU cpu) {CPU_8bitRES(cpu, &REG_C, 7); REG_PC += 2; return 8;}
+int CPU_RES_7_D (CPU cpu) {CPU_8bitRES(cpu, &REG_D, 7); REG_PC += 2; return 8;}
+int CPU_RES_7_E (CPU cpu) {CPU_8bitRES(cpu, &REG_E, 7); REG_PC += 2; return 8;}
+int CPU_RES_7_H (CPU cpu) {CPU_8bitRES(cpu, &REG_H, 7); REG_PC += 2; return 8;}
+int CPU_RES_7_L (CPU cpu) {CPU_8bitRES(cpu, &REG_L, 7); REG_PC += 2; return 8;}
+
+int CPU_RES_7_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitRES(cpu, &byteToTest, 7);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+
+int CPU_SET_0_A (CPU cpu) {CPU_8bitSET(cpu, &REG_A, 0); REG_PC += 2; return 8;}
+int CPU_SET_0_B (CPU cpu) {CPU_8bitSET(cpu, &REG_B, 0); REG_PC += 2; return 8;}
+int CPU_SET_0_C (CPU cpu) {CPU_8bitSET(cpu, &REG_C, 0); REG_PC += 2; return 8;}
+int CPU_SET_0_D (CPU cpu) {CPU_8bitSET(cpu, &REG_D, 0); REG_PC += 2; return 8;}
+int CPU_SET_0_E (CPU cpu) {CPU_8bitSET(cpu, &REG_E, 0); REG_PC += 2; return 8;}
+int CPU_SET_0_H (CPU cpu) {CPU_8bitSET(cpu, &REG_H, 0); REG_PC += 2; return 8;}
+int CPU_SET_0_L (CPU cpu) {CPU_8bitSET(cpu, &REG_L, 0); REG_PC += 2; return 8;}
+
+int CPU_SET_0_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitSET(cpu, &byteToTest, 0);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_SET_1_A (CPU cpu) {CPU_8bitSET(cpu, &REG_A, 1); REG_PC += 2; return 8;}
+int CPU_SET_1_B (CPU cpu) {CPU_8bitSET(cpu, &REG_B, 1); REG_PC += 2; return 8;}
+int CPU_SET_1_C (CPU cpu) {CPU_8bitSET(cpu, &REG_C, 1); REG_PC += 2; return 8;}
+int CPU_SET_1_D (CPU cpu) {CPU_8bitSET(cpu, &REG_D, 1); REG_PC += 2; return 8;}
+int CPU_SET_1_E (CPU cpu) {CPU_8bitSET(cpu, &REG_E, 1); REG_PC += 2; return 8;}
+int CPU_SET_1_H (CPU cpu) {CPU_8bitSET(cpu, &REG_H, 1); REG_PC += 2; return 8;}
+int CPU_SET_1_L (CPU cpu) {CPU_8bitSET(cpu, &REG_L, 1); REG_PC += 2; return 8;}
+
+int CPU_SET_1_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitSET(cpu, &byteToTest, 1);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_SET_2_A (CPU cpu) {CPU_8bitSET(cpu, &REG_A, 2); REG_PC += 2; return 8;}
+int CPU_SET_2_B (CPU cpu) {CPU_8bitSET(cpu, &REG_B, 2); REG_PC += 2; return 8;}
+int CPU_SET_2_C (CPU cpu) {CPU_8bitSET(cpu, &REG_C, 2); REG_PC += 2; return 8;}
+int CPU_SET_2_D (CPU cpu) {CPU_8bitSET(cpu, &REG_D, 2); REG_PC += 2; return 8;}
+int CPU_SET_2_E (CPU cpu) {CPU_8bitSET(cpu, &REG_E, 2); REG_PC += 2; return 8;}
+int CPU_SET_2_H (CPU cpu) {CPU_8bitSET(cpu, &REG_H, 2); REG_PC += 2; return 8;}
+int CPU_SET_2_L (CPU cpu) {CPU_8bitSET(cpu, &REG_L, 2); REG_PC += 2; return 8;}
+
+int CPU_SET_2_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitSET(cpu, &byteToTest, 2);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_SET_3_A (CPU cpu) {CPU_8bitSET(cpu, &REG_A, 3); REG_PC += 2; return 8;}
+int CPU_SET_3_B (CPU cpu) {CPU_8bitSET(cpu, &REG_B, 3); REG_PC += 2; return 8;}
+int CPU_SET_3_C (CPU cpu) {CPU_8bitSET(cpu, &REG_C, 3); REG_PC += 2; return 8;}
+int CPU_SET_3_D (CPU cpu) {CPU_8bitSET(cpu, &REG_D, 3); REG_PC += 2; return 8;}
+int CPU_SET_3_E (CPU cpu) {CPU_8bitSET(cpu, &REG_E, 3); REG_PC += 2; return 8;}
+int CPU_SET_3_H (CPU cpu) {CPU_8bitSET(cpu, &REG_H, 3); REG_PC += 2; return 8;}
+int CPU_SET_3_L (CPU cpu) {CPU_8bitSET(cpu, &REG_L, 3); REG_PC += 2; return 8;}
+
+int CPU_SET_3_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitSET(cpu, &byteToTest, 3);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_SET_4_A (CPU cpu) {CPU_8bitSET(cpu, &REG_A, 4); REG_PC += 2; return 8;}
+int CPU_SET_4_B (CPU cpu) {CPU_8bitSET(cpu, &REG_B, 4); REG_PC += 2; return 8;}
+int CPU_SET_4_C (CPU cpu) {CPU_8bitSET(cpu, &REG_C, 4); REG_PC += 2; return 8;}
+int CPU_SET_4_D (CPU cpu) {CPU_8bitSET(cpu, &REG_D, 4); REG_PC += 2; return 8;}
+int CPU_SET_4_E (CPU cpu) {CPU_8bitSET(cpu, &REG_E, 4); REG_PC += 2; return 8;}
+int CPU_SET_4_H (CPU cpu) {CPU_8bitSET(cpu, &REG_H, 4); REG_PC += 2; return 8;}
+int CPU_SET_4_L (CPU cpu) {CPU_8bitSET(cpu, &REG_L, 4); REG_PC += 2; return 8;}
+
+int CPU_SET_4_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitSET(cpu, &byteToTest, 4);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_SET_5_A (CPU cpu) {CPU_8bitSET(cpu, &REG_A, 5); REG_PC += 2; return 8;}
+int CPU_SET_5_B (CPU cpu) {CPU_8bitSET(cpu, &REG_B, 5); REG_PC += 2; return 8;}
+int CPU_SET_5_C (CPU cpu) {CPU_8bitSET(cpu, &REG_C, 5); REG_PC += 2; return 8;}
+int CPU_SET_5_D (CPU cpu) {CPU_8bitSET(cpu, &REG_D, 5); REG_PC += 2; return 8;}
+int CPU_SET_5_E (CPU cpu) {CPU_8bitSET(cpu, &REG_E, 5); REG_PC += 2; return 8;}
+int CPU_SET_5_H (CPU cpu) {CPU_8bitSET(cpu, &REG_H, 5); REG_PC += 2; return 8;}
+int CPU_SET_5_L (CPU cpu) {CPU_8bitSET(cpu, &REG_L, 5); REG_PC += 2; return 8;}
+
+int CPU_SET_5_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitSET(cpu, &byteToTest, 5);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_SET_6_A (CPU cpu) {CPU_8bitSET(cpu, &REG_A, 6); REG_PC += 2; return 8;}
+int CPU_SET_6_B (CPU cpu) {CPU_8bitSET(cpu, &REG_B, 6); REG_PC += 2; return 8;}
+int CPU_SET_6_C (CPU cpu) {CPU_8bitSET(cpu, &REG_C, 6); REG_PC += 2; return 8;}
+int CPU_SET_6_D (CPU cpu) {CPU_8bitSET(cpu, &REG_D, 6); REG_PC += 2; return 8;}
+int CPU_SET_6_E (CPU cpu) {CPU_8bitSET(cpu, &REG_E, 6); REG_PC += 2; return 8;}
+int CPU_SET_6_H (CPU cpu) {CPU_8bitSET(cpu, &REG_H, 6); REG_PC += 2; return 8;}
+int CPU_SET_6_L (CPU cpu) {CPU_8bitSET(cpu, &REG_L, 6); REG_PC += 2; return 8;}
+
+int CPU_SET_6_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitSET(cpu, &byteToTest, 6);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+int CPU_SET_7_A (CPU cpu) {CPU_8bitSET(cpu, &REG_A, 7); REG_PC += 2; return 8;}
+int CPU_SET_7_B (CPU cpu) {CPU_8bitSET(cpu, &REG_B, 7); REG_PC += 2; return 8;}
+int CPU_SET_7_C (CPU cpu) {CPU_8bitSET(cpu, &REG_C, 7); REG_PC += 2; return 8;}
+int CPU_SET_7_D (CPU cpu) {CPU_8bitSET(cpu, &REG_D, 7); REG_PC += 2; return 8;}
+int CPU_SET_7_E (CPU cpu) {CPU_8bitSET(cpu, &REG_E, 7); REG_PC += 2; return 8;}
+int CPU_SET_7_H (CPU cpu) {CPU_8bitSET(cpu, &REG_H, 7); REG_PC += 2; return 8;}
+int CPU_SET_7_L (CPU cpu) {CPU_8bitSET(cpu, &REG_L, 7); REG_PC += 2; return 8;}
+
+int CPU_SET_7_aHL (CPU cpu) {
+   byte byteToTest;
+   MMU mmu = GB_getMMU (cpu->gb);
+   byteToTest = MMU_readByte (mmu, REG_HL);
+   CPU_8bitSET(cpu, &byteToTest, 7);
+   MMU_writeByte (mmu, REG_HL, byteToTest);
+   REG_PC += 2; 
+   return 16;
+}
+
