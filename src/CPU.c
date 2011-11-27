@@ -497,6 +497,19 @@ void CPU_initInstructionMap () {
    instructionMap[0x0F] = &CPU_RRCA;
    instructionMap[0x1F] = &CPU_RRA;
 
+   instructionMap[0xC3] = &CPU_JP;
+   instructionMap[0xC2] = &CPU_JPNZ;
+   instructionMap[0xCA] = &CPU_JPZ;
+   instructionMap[0xD2] = &CPU_JPNC;
+   instructionMap[0xDA] = &CPU_JPC;
+   instructionMap[0xE9] = &CPU_JP_HL;
+   instructionMap[0x18] = &CPU_JR_n;
+   instructionMap[0x20] = &CPU_JRNZ_n;
+   instructionMap[0x28] = &CPU_JRZ_n;
+   instructionMap[0x30] = &CPU_JRNC_n;
+   instructionMap[0x38] = &CPU_JRC_n;
+   
+
    instructionMapCB[0x37] = &CPU_SWAP_A; 
    instructionMapCB[0x30] = &CPU_SWAP_B; 
    instructionMapCB[0x31] = &CPU_SWAP_C; 

@@ -250,6 +250,19 @@ int CPU_RLA (CPU cpu);
 int CPU_RRCA (CPU cpu);
 int CPU_RRA (CPU cpu);
 
+int CPU_JP (CPU cpu);
+int CPU_JPNZ (CPU cpu);
+int CPU_JPZ (CPU cpu);
+int CPU_JPNC (CPU cpu);
+int CPU_JPC (CPU cpu);
+
+int CPU_JP_HL (CPU cpu);
+int CPU_JR_n (CPU cpu);
+int CPU_JRNZ_n (CPU cpu);
+int CPU_JRZ_n (CPU cpu);
+int CPU_JRNC_n (CPU cpu);
+int CPU_JRC_n (CPU cpu);
+
 int CPU_SWAP_A (CPU cpu);
 int CPU_SWAP_B (CPU cpu);
 int CPU_SWAP_C (CPU cpu);

@@ -1737,6 +1737,101 @@ int CPU_RRA (CPU cpu) {
    return 4;
 }
 
+int CPU_JP (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_PC = MMU_readWord (mmu, REG_PC+1);
+   return 12;
+}
+
+int CPU_JPNZ (CPU cpu) {
+   if (!CPU_isZeroSet(cpu)) {
+      CPU_JP (cpu);
+   } else {
+      REG_PC += 3;
+   }
+
+   return 12;
+}
+
+int CPU_JPZ (CPU cpu) {
+   if (CPU_isZeroSet(cpu)) {
+      CPU_JP (cpu);
+   } else {
+      REG_PC += 3;
+   }
+
+   return 12;
+}
+
+int CPU_JPNC (CPU cpu) {
+   if (!CPU_isCarrySet(cpu)) {
+      CPU_JP (cpu);
+   } else {
+      REG_PC += 3;
+   }
+
+   return 12;
+}
+
+int CPU_JPC (CPU cpu) {
+   if (CPU_isCarrySet(cpu)) {
+      CPU_JP (cpu);
+   } else {
+      REG_PC += 3;
+   }
+
+   return 12;
+}
+
+int CPU_JP_HL (CPU cpu) {
+   REG_PC = REG_HL;
+   return 4;
+}
+
+int CPU_JR_n (CPU cpu) {
+   signed_byte immediate;
+   MMU mmu = GB_getMMU (cpu->gb);
+   immediate = (signed_byte)MMU_readByte (mmu, REG_PC + 1);
+   REG_PC += immediate;
+   return 8;
+}
+
+int CPU_JRNZ_n (CPU cpu) {
+   if (!CPU_isZeroSet (cpu)) {
+      CPU_JR_n (cpu);
+   } else {
+      REG_PC += 2;
+   }
+   return 8;
+}
+
+int CPU_JRZ_n (CPU cpu) {
+   if (CPU_isZeroSet (cpu)) {
+      CPU_JR_n (cpu);
+   } else {
+      REG_PC += 2;
+   }
+   return 8;
+}
+
+int CPU_JRNC_n (CPU cpu) {
+   if (!CPU_isCarrySet (cpu)) {
+      CPU_JR_n (cpu);
+   } else {
+      REG_PC += 2;
+   }
+   return 8;
+}
+
+int CPU_JRC_n (CPU cpu) {
+   if (CPU_isCarrySet (cpu)) {
+      CPU_JR_n (cpu);
+   } else {
+      REG_PC += 2;
+   }
+   return 8;
+}
+
 int CPU_SWAP_A (CPU cpu) {
    CPU_8bitSWAP (cpu, &REG_A);
    REG_PC++;
