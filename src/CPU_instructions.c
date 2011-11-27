@@ -1976,6 +1976,8 @@ int CPU_RETC (CPU cpu) {
 }
 
 int CPU_RETI (CPU cpu) {
+   CPU_RET (cpu);
+   CPU_EI (cpu);
    return 8;
 }
 
