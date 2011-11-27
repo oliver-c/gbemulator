@@ -1737,15 +1737,15 @@ int CPU_RRA (CPU cpu) {
    return 4;
 }
 
-int CPU_JP (CPU cpu) {
+int CPU_JP_nn (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    REG_PC = MMU_readWord (mmu, REG_PC+1);
    return 12;
 }
 
-int CPU_JPNZ (CPU cpu) {
+int CPU_JPNZ_nn (CPU cpu) {
    if (!CPU_isZeroSet(cpu)) {
-      CPU_JP (cpu);
+      CPU_JP_nn (cpu);
    } else {
       REG_PC += 3;
    }
@@ -1753,9 +1753,9 @@ int CPU_JPNZ (CPU cpu) {
    return 12;
 }
 
-int CPU_JPZ (CPU cpu) {
+int CPU_JPZ_nn (CPU cpu) {
    if (CPU_isZeroSet(cpu)) {
-      CPU_JP (cpu);
+      CPU_JP_nn (cpu);
    } else {
       REG_PC += 3;
    }
@@ -1763,9 +1763,9 @@ int CPU_JPZ (CPU cpu) {
    return 12;
 }
 
-int CPU_JPNC (CPU cpu) {
+int CPU_JPNC_nn (CPU cpu) {
    if (!CPU_isCarrySet(cpu)) {
-      CPU_JP (cpu);
+      CPU_JP_nn (cpu);
    } else {
       REG_PC += 3;
    }
@@ -1773,9 +1773,9 @@ int CPU_JPNC (CPU cpu) {
    return 12;
 }
 
-int CPU_JPC (CPU cpu) {
+int CPU_JPC_nn (CPU cpu) {
    if (CPU_isCarrySet(cpu)) {
-      CPU_JP (cpu);
+      CPU_JP_nn (cpu);
    } else {
       REG_PC += 3;
    }
@@ -1830,6 +1830,61 @@ int CPU_JRC_n (CPU cpu) {
       REG_PC += 2;
    }
    return 8;
+}
+
+int CPU_CALL_nn (CPU cpu) {
+   word jumpTo;
+   MMU mmu = GB_getMMU (cpu->gb);
+   
+   jumpTo = MMU_readWord (mmu, REG_PC+1);
+
+   /* Push return address */
+   REG_SP -= 2;
+   MMU_writeWord (mmu, REG_SP, REG_PC+3);
+   
+   REG_PC = jumpTo;
+
+   return 12;
+}
+
+int CPU_CALLNZ_nn (CPU cpu) {
+   if (!CPU_isZeroSet (cpu)) {
+      CPU_CALL_nn (cpu);
+   } else {
+      REG_PC += 3; 
+   }
+
+   return 12;
+}
+
+int CPU_CALLZ_nn (CPU cpu) {
+   if (CPU_isZeroSet (cpu)) {
+      CPU_CALL_nn (cpu);
+   } else {
+      REG_PC += 3; 
+   }
+
+   return 12;
+}
+
+int CPU_CALLNC_nn (CPU cpu) {
+   if (!CPU_isCarrySet (cpu)) {
+      CPU_CALL_nn (cpu);
+   } else {
+      REG_PC += 3; 
+   }
+
+   return 12;
+}
+
+int CPU_CALLC_nn (CPU cpu) {
+   if (CPU_isCarrySet (cpu)) {
+      CPU_CALL_nn (cpu);
+   } else {
+      REG_PC += 3; 
+   }
+
+   return 12;
 }
 
 int CPU_SWAP_A (CPU cpu) {
