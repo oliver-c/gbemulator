@@ -278,6 +278,13 @@ int CPU_RST_28H (CPU cpu);
 int CPU_RST_30H (CPU cpu);
 int CPU_RST_38H (CPU cpu);
 
+int CPU_RET (CPU cpu);
+int CPU_RETNZ (CPU cpu);
+int CPU_RETZ (CPU cpu);
+int CPU_RETNC (CPU cpu);
+int CPU_RETC (CPU cpu);
+int CPU_RETI (CPU cpu);
+
 int CPU_SWAP_A (CPU cpu);
 int CPU_SWAP_B (CPU cpu);
 int CPU_SWAP_C (CPU cpu);

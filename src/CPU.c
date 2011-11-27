@@ -524,6 +524,13 @@ void CPU_initInstructionMap () {
    instructionMap[0xF7] = &CPU_RST_30H;
    instructionMap[0xFF] = &CPU_RST_38H;
 
+   instructionMap[0xC9] = &CPU_RET;
+   instructionMap[0xC0] = &CPU_RETNZ;
+   instructionMap[0xC8] = &CPU_RETZ;
+   instructionMap[0xD0] = &CPU_RETNC;
+   instructionMap[0xD8] = &CPU_RETC;
+   instructionMap[0xD9] = &CPU_RETI;
+
    instructionMapCB[0x37] = &CPU_SWAP_A; 
    instructionMapCB[0x30] = &CPU_SWAP_B; 
    instructionMapCB[0x31] = &CPU_SWAP_C; 

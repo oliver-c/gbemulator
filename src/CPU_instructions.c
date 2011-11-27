@@ -931,7 +931,7 @@ int CPU_LD_ann_SP (CPU cpu) {
 int CPU_PUSH_AF (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    REG_SP -= 2;
-   MMU_writeByte (mmu, REG_SP, REG_AF);
+   MMU_writeWord (mmu, REG_SP, REG_AF);
    REG_PC++;
    return 16;
 }
@@ -939,7 +939,7 @@ int CPU_PUSH_AF (CPU cpu) {
 int CPU_PUSH_BC (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    REG_SP -= 2;
-   MMU_writeByte (mmu, REG_SP, REG_BC);
+   MMU_writeWord (mmu, REG_SP, REG_BC);
    REG_PC++;
    return 16;
 }
@@ -947,7 +947,7 @@ int CPU_PUSH_BC (CPU cpu) {
 int CPU_PUSH_DE (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    REG_SP -= 2;
-   MMU_writeByte (mmu, REG_SP, REG_DE);
+   MMU_writeWord (mmu, REG_SP, REG_DE);
    REG_PC++;
    return 16;
 }
@@ -955,14 +955,14 @@ int CPU_PUSH_DE (CPU cpu) {
 int CPU_PUSH_HL (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    REG_SP -= 2;
-   MMU_writeByte (mmu, REG_SP, REG_HL);
+   MMU_writeWord (mmu, REG_SP, REG_HL);
    REG_PC++;
    return 16;
 }
 
 int CPU_POP_AF (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
-   REG_AF = MMU_readByte (mmu, REG_SP);
+   REG_AF = MMU_readWord (mmu, REG_SP);
    REG_SP += 2;
    REG_PC++;
    return 12;
@@ -970,7 +970,7 @@ int CPU_POP_AF (CPU cpu) {
 
 int CPU_POP_BC (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
-   REG_BC = MMU_readByte (mmu, REG_SP);
+   REG_BC = MMU_readWord (mmu, REG_SP);
    REG_SP += 2;
    REG_PC++;
    return 12;
@@ -978,7 +978,7 @@ int CPU_POP_BC (CPU cpu) {
 
 int CPU_POP_DE (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
-   REG_DE = MMU_readByte (mmu, REG_SP);
+   REG_DE = MMU_readWord (mmu, REG_SP);
    REG_SP += 2;
    REG_PC++;
    return 12;
@@ -986,7 +986,7 @@ int CPU_POP_DE (CPU cpu) {
 
 int CPU_POP_HL (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
-   REG_HL = MMU_readByte (mmu, REG_SP);
+   REG_HL = MMU_readWord (mmu, REG_SP);
    REG_SP += 2;
    REG_PC++;
    return 12;
@@ -1929,6 +1929,54 @@ int CPU_RST_28H (CPU cpu) {
 int CPU_RST_30H (CPU cpu) {
    CPU_RST (cpu, 0x30);
    return 32;
+}
+
+int CPU_RET (CPU cpu) {
+   MMU mmu = GB_getMMU (cpu->gb);
+   REG_PC = MMU_readWord (mmu, REG_SP);
+   REG_SP += 2;
+
+   return 8;
+}
+
+int CPU_RETNZ (CPU cpu) {
+   if (!CPU_isZeroSet (cpu)) {
+      CPU_RET (cpu);
+   } else {
+      REG_PC++;
+   }
+   return 8;
+}
+
+int CPU_RETZ (CPU cpu) {
+   if (CPU_isZeroSet (cpu)) {
+      CPU_RET (cpu);
+   } else {
+      REG_PC++;
+   }
+   return 8;
+}
+
+int CPU_RETNC (CPU cpu) {
+   if (!CPU_isCarrySet (cpu)) {
+      CPU_RET (cpu);
+   } else {
+      REG_PC++;
+   }
+   return 8;
+}
+
+int CPU_RETC (CPU cpu) {
+   if (CPU_isCarrySet (cpu)) {
+      CPU_RET (cpu);
+   } else {
+      REG_PC++;
+   }
+   return 8;
+}
+
+int CPU_RETI (CPU cpu) {
+   return 8;
 }
 
 int CPU_RST_38H (CPU cpu) {
