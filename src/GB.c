@@ -5,6 +5,7 @@
 #include "GB.h"
 #include "CPU.h"
 #include "MMU.h"
+#include "GPU.h"
 #include "Cartridge.h"
 #include "GUI.h"
 
@@ -15,6 +16,7 @@ struct GB {
 
    CPU cpu;
    MMU mmu;
+   GPU gpu;
 
    Cartridge cartridge;
 
@@ -33,6 +35,7 @@ GB GB_init () {
 
    newGB->cpu = CPU_init (newGB);
    newGB->mmu = MMU_init (newGB);
+   newGB->gpu = GPU_init (newGB);
    newGB->cartridge = Cartridge_init (newGB);
    newGB->gui = GUI_init (newGB);
 
@@ -40,6 +43,18 @@ GB GB_init () {
    GB_runBootSequence (newGB);
 
    return newGB;
+}
+
+void GB_free (GB gb) {
+   assert (gb != NULL);
+
+   CPU_free (gb->cpu);
+   MMU_free (gb->mmu);
+   GPU_free (gb->gpu);
+   Cartridge_free (gb->cartridge);
+   GUI_free (gb->gui);
+
+   free (gb);
 }
 
 void GB_loadRom (GB gb, const char *location) {
@@ -61,17 +76,6 @@ void GB_run (GB gb) {
       GUI_handleEvents (gb->gui);
       cyclesSoFar += GB_handleInterrupts (gb);
    }
-}
-
-void GB_free (GB gb) {
-   assert (gb != NULL);
-
-   CPU_free (gb->cpu);
-   MMU_free (gb->mmu);
-   Cartridge_free (gb->cartridge);
-   GUI_free (gb->gui);
-
-   free (gb);
 }
 
 void GB_setRunning (GB gb, bool running) {

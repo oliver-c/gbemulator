@@ -10,9 +10,10 @@
 #include "types.h"
 
 GB GB_init ();
+void GB_free (GB gb);
+
 void GB_loadRom (GB gb, const char *location);
 void GB_run (GB gb);
-void GB_free (GB gb);
 
 void GB_setRunning (GB gb, bool running);
 
