@@ -1931,6 +1931,11 @@ int CPU_RST_30H (CPU cpu) {
    return 32;
 }
 
+int CPU_RST_38H (CPU cpu) {
+   CPU_RST (cpu, 0x38);
+   return 32;
+}
+
 int CPU_RET (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    REG_PC = MMU_readWord (mmu, REG_SP);
@@ -1979,11 +1984,6 @@ int CPU_RETI (CPU cpu) {
    CPU_RET (cpu);
    CPU_EI (cpu);
    return 8;
-}
-
-int CPU_RST_38H (CPU cpu) {
-   CPU_RST (cpu, 0x38);
-   return 32;
 }
 
 int CPU_SWAP_A (CPU cpu) {
