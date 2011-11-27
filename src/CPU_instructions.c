@@ -292,6 +292,15 @@ void CPU_8bitRES (CPU cpu, byte *dest, int bit) {
    clearBit (dest, bit);
 }
 
+void CPU_RST (CPU cpu, byte n) {
+   MMU mmu = GB_getMMU (cpu->gb);
+
+   REG_SP -= 2;
+   MMU_writeWord (mmu, REG_SP, REG_PC);
+   
+   REG_PC = n;
+}
+
 int CPU_NOP (CPU cpu) {
    REG_PC++;
    return 4;
@@ -1885,6 +1894,46 @@ int CPU_CALLC_nn (CPU cpu) {
    }
 
    return 12;
+}
+
+int CPU_RST_00H (CPU cpu) {
+   CPU_RST (cpu, 0x00);
+   return 32;
+}
+
+int CPU_RST_08H (CPU cpu) {
+   CPU_RST (cpu, 0x08);
+   return 32;
+}
+
+int CPU_RST_10H (CPU cpu) {
+   CPU_RST (cpu, 0x10);
+   return 32;
+}
+
+int CPU_RST_18H (CPU cpu) {
+   CPU_RST (cpu, 0x18);
+   return 32;
+}
+
+int CPU_RST_20H (CPU cpu) {
+   CPU_RST (cpu, 0x20);
+   return 32;
+}
+
+int CPU_RST_28H (CPU cpu) {
+   CPU_RST (cpu, 0x28);
+   return 32;
+}
+
+int CPU_RST_30H (CPU cpu) {
+   CPU_RST (cpu, 0x30);
+   return 32;
+}
+
+int CPU_RST_38H (CPU cpu) {
+   CPU_RST (cpu, 0x38);
+   return 32;
 }
 
 int CPU_SWAP_A (CPU cpu) {

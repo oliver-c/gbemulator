@@ -269,6 +269,15 @@ int CPU_CALLZ_nn (CPU cpu);
 int CPU_CALLNC_nn (CPU cpu); 
 int CPU_CALLC_nn (CPU cpu); 
 
+int CPU_RST_00H (CPU cpu);
+int CPU_RST_08H (CPU cpu);
+int CPU_RST_10H (CPU cpu);
+int CPU_RST_18H (CPU cpu);
+int CPU_RST_20H (CPU cpu);
+int CPU_RST_28H (CPU cpu);
+int CPU_RST_30H (CPU cpu);
+int CPU_RST_38H (CPU cpu);
+
 int CPU_SWAP_A (CPU cpu);
 int CPU_SWAP_B (CPU cpu);
 int CPU_SWAP_C (CPU cpu);

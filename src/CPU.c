@@ -515,6 +515,15 @@ void CPU_initInstructionMap () {
    instructionMap[0xD4] = &CPU_CALLNC_nn; 
    instructionMap[0xDC] = &CPU_CALLC_nn; 
 
+   instructionMap[0xC7] = &CPU_RST_00H;
+   instructionMap[0xCF] = &CPU_RST_08H;
+   instructionMap[0xD7] = &CPU_RST_10H;
+   instructionMap[0xDF] = &CPU_RST_18H;
+   instructionMap[0xE7] = &CPU_RST_20H;
+   instructionMap[0xEF] = &CPU_RST_28H;
+   instructionMap[0xF7] = &CPU_RST_30H;
+   instructionMap[0xFF] = &CPU_RST_38H;
+
    instructionMapCB[0x37] = &CPU_SWAP_A; 
    instructionMapCB[0x30] = &CPU_SWAP_B; 
    instructionMapCB[0x31] = &CPU_SWAP_C; 
