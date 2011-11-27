@@ -294,4 +294,31 @@ int CPU_RR_E (CPU cpu);
 int CPU_RR_H (CPU cpu);
 int CPU_RR_L (CPU cpu);
 int CPU_RR_aHL (CPU cpu);
+
+int CPU_SLA_A (CPU cpu);
+int CPU_SLA_B (CPU cpu);
+int CPU_SLA_C (CPU cpu);
+int CPU_SLA_D (CPU cpu);
+int CPU_SLA_E (CPU cpu);
+int CPU_SLA_H (CPU cpu);
+int CPU_SLA_L (CPU cpu);
+int CPU_SLA_aHL (CPU cpu);
+
+int CPU_SRA_A (CPU cpu);
+int CPU_SRA_B (CPU cpu);
+int CPU_SRA_C (CPU cpu);
+int CPU_SRA_D (CPU cpu);
+int CPU_SRA_E (CPU cpu);
+int CPU_SRA_H (CPU cpu);
+int CPU_SRA_L (CPU cpu);
+int CPU_SRA_aHL (CPU cpu);
+
+int CPU_SRL_A (CPU cpu);
+int CPU_SRL_B (CPU cpu);
+int CPU_SRL_C (CPU cpu);
+int CPU_SRL_D (CPU cpu);
+int CPU_SRL_E (CPU cpu);
+int CPU_SRL_H (CPU cpu);
+int CPU_SRL_L (CPU cpu);
+int CPU_SRL_aHL (CPU cpu);
 #endif

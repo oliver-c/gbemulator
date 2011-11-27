@@ -541,4 +541,31 @@ void CPU_initInstructionMap () {
    instructionMapCB[0x1C] = &CPU_RR_H;
    instructionMapCB[0x1D] = &CPU_RR_L;
    instructionMapCB[0x1E] = &CPU_RR_aHL;
+
+   instructionMapCB[0x27] = &CPU_SLA_A;
+   instructionMapCB[0x20] = &CPU_SLA_B;
+   instructionMapCB[0x21] = &CPU_SLA_C;
+   instructionMapCB[0x22] = &CPU_SLA_D;
+   instructionMapCB[0x23] = &CPU_SLA_E;
+   instructionMapCB[0x24] = &CPU_SLA_H;
+   instructionMapCB[0x25] = &CPU_SLA_L;
+   instructionMapCB[0x26] = &CPU_SLA_aHL;
+
+   instructionMapCB[0x2F] = &CPU_SRA_A;
+   instructionMapCB[0x28] = &CPU_SRA_B;
+   instructionMapCB[0x29] = &CPU_SRA_C;
+   instructionMapCB[0x2A] = &CPU_SRA_D;
+   instructionMapCB[0x2B] = &CPU_SRA_E;
+   instructionMapCB[0x2C] = &CPU_SRA_H;
+   instructionMapCB[0x2D] = &CPU_SRA_L;
+   instructionMapCB[0x2E] = &CPU_SRA_aHL;
+
+   instructionMapCB[0x3F] = &CPU_SRL_A;
+   instructionMapCB[0x38] = &CPU_SRL_B;
+   instructionMapCB[0x39] = &CPU_SRL_C;
+   instructionMapCB[0x3A] = &CPU_SRL_D;
+   instructionMapCB[0x3B] = &CPU_SRL_E;
+   instructionMapCB[0x3C] = &CPU_SRL_H;
+   instructionMapCB[0x3D] = &CPU_SRL_L;
+   instructionMapCB[0x3E] = &CPU_SRL_aHL;
 }
