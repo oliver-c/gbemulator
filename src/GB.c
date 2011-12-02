@@ -29,6 +29,9 @@ void GB_runBootSequence (GB gb);
 /* Checks for any interrupts and handles them, returns the number of cycles used */
 int GB_handleInterrupts (GB gb);
 
+/* Updates the timers */
+void GB_handleTimers (GB gb);
+
 GB GB_init () {
    GB newGB = (GB)malloc(sizeof(struct GB));
    assert (newGB != NULL);
@@ -74,6 +77,7 @@ void GB_run (GB gb) {
       }
 
       GUI_handleEvents (gb->gui);
+      GB_handleTimers (gb);
       cyclesSoFar += GB_handleInterrupts (gb);
    }
 }
@@ -170,4 +174,11 @@ int GB_handleInterrupts (GB gb) {
    }
 
    return cycles;
+}
+
+void GB_handleTimers (GB gb) {
+   MMU mmu;
+
+   mmu = GB_getMMU (gb);
+
 }
