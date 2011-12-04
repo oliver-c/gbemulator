@@ -90,6 +90,15 @@ void GB_setRunning (GB gb, bool running) {
    gb->isRunning = running;
 }
 
+void GB_requestInterrupt (GB gb, int interrupt) {
+   byte IFRegister;
+   assert (interrupt >= 0 && interrupt <= INT_JOYPAD);
+
+   IFRegister = MMU_readByte (gb->mmu, 0xFF0F);
+   setBit (&IFRegister, interrupt);
+   MMU_writeByte (gb->mmu, 0xFF0F, IFRegister);
+}
+
 CPU GB_getCPU (GB gb) {
    return (gb->cpu);
 }
@@ -181,7 +190,6 @@ int GB_handleInterrupts (GB gb) {
 }
 
 void GB_handleTimers (GB gb, int cycles) {
-   MMU mmu;
    byte *memory; /* We need direct memory access to change the 
                     divider register */
 
@@ -193,15 +201,13 @@ void GB_handleTimers (GB gb, int cycles) {
    int frequencyIndex;
    int dividerTimer;
    int timer;
-   byte IFRegister;
 
-   mmu = GB_getMMU (gb);
-   memory = MMU_getMemory (mmu);
+   memory = MMU_getMemory (gb->mmu);
 
    /* Get timer information */
-   timerControl = MMU_readByte (mmu, 0xFF07);
-   dividerTimer = MMU_readByte (mmu, 0xFF04);
-   timer = MMU_readByte (mmu, 0xFF05);
+   timerControl = MMU_readByte (gb->mmu, 0xFF07);
+   dividerTimer = MMU_readByte (gb->mmu, 0xFF04);
+   timer = MMU_readByte (gb->mmu, 0xFF05);
 
    /* Update the divider register */
    dividerCounter += cycles;
@@ -227,12 +233,9 @@ void GB_handleTimers (GB gb, int cycles) {
 
          if (timer > 0xFF) {
             /* Overflow */
-            timer = MMU_readByte (mmu, 0xFF06);
+            timer = MMU_readByte (gb->mmu, 0xFF06);
             
-            /* Request timer interrupt */
-            IFRegister = MMU_readByte (mmu, 0xFF0F);
-            setBit (&IFRegister, INT_TIMER);
-            MMU_writeByte (mmu, 0xFF0F, IFRegister);
+            GB_requestInterrupt (gb, INT_TIMER);   
          }
       }
    }

@@ -21,6 +21,7 @@ void GB_loadRom (GB gb, const char *location);
 void GB_run (GB gb);
 
 void GB_setRunning (GB gb, bool running);
+void GB_requestInterrupt (GB gb, int interrupt);
 
 CPU GB_getCPU (GB gb);
 MMU GB_getMMU (GB gb);
