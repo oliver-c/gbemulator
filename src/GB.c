@@ -193,6 +193,7 @@ void GB_handleTimers (GB gb, int cycles) {
    int frequencyIndex;
    int dividerTimer;
    int timer;
+   byte IFRegister;
 
    mmu = GB_getMMU (gb);
    memory = MMU_getMemory (mmu);
@@ -208,6 +209,11 @@ void GB_handleTimers (GB gb, int cycles) {
       /* Update the timer based on the cycles passed */
       dividerTimer++;
       dividerCounter -= (CLOCK_SPEED/TIMER_DIVIDER_FREQ);
+
+      if (dividerTimer > 0xFF) {
+         /* Overflow */
+         dividerTimer = 0;
+      }
    }
 
    if (testBit (timerControl, 2)) {
@@ -218,6 +224,20 @@ void GB_handleTimers (GB gb, int cycles) {
       if (timerCounter >= (CLOCK_SPEED/timerFrequencies[frequencyIndex])) {
          timer++;
          timerCounter -= (CLOCK_SPEED/timerFrequencies[frequencyIndex]);
+
+         if (timer > 0xFF) {
+            /* Overflow */
+            timer = MMU_readByte (mmu, 0xFF06);
+            
+            /* Request timer interrupt */
+            IFRegister = MMU_readByte (mmu, 0xFF0F);
+            setBit (&IFRegister, INT_TIMER);
+            MMU_writeByte (mmu, 0xFF0F, IFRegister);
+         }
       }
    }
+
+   /* Write new timer values */
+   memory[0xFF04] = dividerTimer;
+   memory[0xFF05] = timer;
 }
