@@ -81,7 +81,7 @@ void GB_run (GB gb) {
 
       GUI_handleEvents (gb->gui);
       GB_handleTimers (gb, cyclesThisIteration);
-      GPU_update (gb->gpu);
+      GPU_update (gb->gpu, cyclesThisIteration);
       cyclesSoFar += GB_handleInterrupts (gb);
    }
 }
@@ -116,6 +116,8 @@ GUI GB_getGUI (GB gb) {
 }
 
 void GB_runBootSequence (GB gb) {
+   byte *memory;
+
    /* Initialise CPU Registers */
    CPU_set16bitRegisterValue (gb->cpu, AF, 0x01B0);
    CPU_set16bitRegisterValue (gb->cpu, BC, 0x0013);
@@ -124,38 +126,40 @@ void GB_runBootSequence (GB gb) {
    CPU_set16bitRegisterValue (gb->cpu, SP, 0xFFFE);
    CPU_set16bitRegisterValue (gb->cpu, PC, 0x0100);
 
+   memory = MMU_getMemory (gb->mmu);
+
    /* Initialise values in memory */
-   MMU_writeByte (gb->mmu, 0xFF05, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF06, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF07, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF10, 0x80);
-   MMU_writeByte (gb->mmu, 0xFF11, 0xBF);
-   MMU_writeByte (gb->mmu, 0xFF12, 0xF3);
-   MMU_writeByte (gb->mmu, 0xFF14, 0xBF);
-   MMU_writeByte (gb->mmu, 0xFF16, 0x3F);
-   MMU_writeByte (gb->mmu, 0xFF17, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF19, 0xBF);
-   MMU_writeByte (gb->mmu, 0xFF1A, 0x7F);
-   MMU_writeByte (gb->mmu, 0xFF1B, 0xFF);
-   MMU_writeByte (gb->mmu, 0xFF1C, 0x9F);
-   MMU_writeByte (gb->mmu, 0xFF1E, 0xBF);
-   MMU_writeByte (gb->mmu, 0xFF20, 0xFF);
-   MMU_writeByte (gb->mmu, 0xFF21, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF22, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF23, 0xBF);
-   MMU_writeByte (gb->mmu, 0xFF24, 0x77);
-   MMU_writeByte (gb->mmu, 0xFF25, 0xF3);
-   MMU_writeByte (gb->mmu, 0xFF26, 0xF1);
-   MMU_writeByte (gb->mmu, 0xFF40, 0x91);
-   MMU_writeByte (gb->mmu, 0xFF42, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF43, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF45, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF47, 0xFC);
-   MMU_writeByte (gb->mmu, 0xFF48, 0xFF);
-   MMU_writeByte (gb->mmu, 0xFF49, 0xFF);
-   MMU_writeByte (gb->mmu, 0xFF4A, 0x00);
-   MMU_writeByte (gb->mmu, 0xFF4B, 0x00);
-   MMU_writeByte (gb->mmu, 0xFFFF, 0x00);
+   memory[0xFF05] = 0x00;
+   memory[0xFF06] = 0x00;
+   memory[0xFF07] = 0x00;
+   memory[0xFF10] = 0x80;
+   memory[0xFF11] = 0xBF;
+   memory[0xFF12] = 0xF3;
+   memory[0xFF14] = 0xBF;
+   memory[0xFF16] = 0x3F;
+   memory[0xFF17] = 0x00;
+   memory[0xFF19] = 0xBF;
+   memory[0xFF1A] = 0x7F;
+   memory[0xFF1B] = 0xFF;
+   memory[0xFF1C] = 0x9F;
+   memory[0xFF1E] = 0xBF;
+   memory[0xFF20] = 0xFF;
+   memory[0xFF21] = 0x00;
+   memory[0xFF22] = 0x00;
+   memory[0xFF23] = 0xBF;
+   memory[0xFF24] = 0x77;
+   memory[0xFF25] = 0xF3;
+   memory[0xFF26] = 0xF1;
+   memory[0xFF40] = 0x91;
+   memory[0xFF42] = 0x00;
+   memory[0xFF43] = 0x00;
+   memory[0xFF45] = 0x00;
+   memory[0xFF47] = 0xFC;
+   memory[0xFF48] = 0xFF;
+   memory[0xFF49] = 0xFF;
+   memory[0xFF4A] = 0x00;
+   memory[0xFF4B] = 0x00;
+   memory[0xFFFF] = 0x00;
 }
 
 int GB_handleInterrupts (GB gb) {
@@ -211,7 +215,7 @@ void GB_handleTimers (GB gb, int cycles) {
 
    /* Update the divider register */
    dividerCounter += cycles;
-   if (dividerCounter >= (CLOCK_SPEED/TIMER_DIVIDER_FREQ)) {
+   while (dividerCounter >= (CLOCK_SPEED/TIMER_DIVIDER_FREQ)) {
       /* Update the timer based on the cycles passed */
       dividerTimer++;
       dividerCounter -= (CLOCK_SPEED/TIMER_DIVIDER_FREQ);
@@ -227,14 +231,13 @@ void GB_handleTimers (GB gb, int cycles) {
       timerCounter += cycles;
       frequencyIndex = ((timerControl & 2) << 1) | (timerControl & 1);
 
-      if (timerCounter >= (CLOCK_SPEED/timerFrequencies[frequencyIndex])) {
+      while (timerCounter >= (CLOCK_SPEED/timerFrequencies[frequencyIndex])) {
          timer++;
          timerCounter -= (CLOCK_SPEED/timerFrequencies[frequencyIndex]);
 
          if (timer > 0xFF) {
             /* Overflow */
             timer = MMU_readByte (gb->mmu, 0xFF06);
-            
             GB_requestInterrupt (gb, INT_TIMER);   
          }
       }
