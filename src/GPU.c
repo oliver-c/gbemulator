@@ -24,3 +24,6 @@ void GPU_free (GPU gpu) {
    free (gpu);
 }
 
+void GPU_update (GPU gpu) {
+
+}

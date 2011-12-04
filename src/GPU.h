@@ -14,4 +14,6 @@ typedef enum GPU_mode {
 GPU GPU_init (GB gb);
 void GPU_free (GPU gpu);
 
+void GPU_update (GPU gpu);
+
 #endif

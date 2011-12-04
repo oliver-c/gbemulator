@@ -9,6 +9,11 @@
 
 #include "types.h"
 
+#define TIMER_DIVIDER_FREQ 16384
+#define TIMER_DIVIDER_INCREMENT_TIME (16384/1000)
+
+static const int timerFrequencies[] = {4096, 262144, 65536, 16384};
+
 GB GB_init ();
 void GB_free (GB gb);
 

@@ -9,6 +9,7 @@
 #include "Cartridge.h"
 #include "GUI.h"
 
+#include "bitOperations.h"
 #include "types.h"
 
 struct GB {
@@ -30,7 +31,7 @@ void GB_runBootSequence (GB gb);
 int GB_handleInterrupts (GB gb);
 
 /* Updates the timers */
-void GB_handleTimers (GB gb);
+void GB_handleTimers (GB gb, int cycles);
 
 GB GB_init () {
    GB newGB = (GB)malloc(sizeof(struct GB));
@@ -66,18 +67,21 @@ void GB_loadRom (GB gb, const char *location) {
 
 void GB_run (GB gb) {
    int cyclesSoFar = 0;
+   int cyclesThisIteration = 0;
 
    gb->isRunning = TRUE;
 
    while (gb->isRunning) {
-      cyclesSoFar += CPU_step (gb->cpu);
+      cyclesThisIteration = CPU_step (gb->cpu);
+      cyclesSoFar += cyclesThisIteration;
 
       if (cyclesSoFar >= CLOCK_SPEED) {
          /* delay */
       }
 
       GUI_handleEvents (gb->gui);
-      GB_handleTimers (gb);
+      GB_handleTimers (gb, cyclesThisIteration);
+      GPU_update (gb->gpu);
       cyclesSoFar += GB_handleInterrupts (gb);
    }
 }
@@ -176,9 +180,44 @@ int GB_handleInterrupts (GB gb) {
    return cycles;
 }
 
-void GB_handleTimers (GB gb) {
+void GB_handleTimers (GB gb, int cycles) {
    MMU mmu;
+   byte *memory; /* We need direct memory access to change the 
+                    divider register */
+
+   byte timerControl; /* This tells us the status of the timer
+                         and the frequency */
+
+   static int dividerCounter = 0;
+   static int timerCounter = 0;
+   int frequencyIndex;
+   int dividerTimer;
+   int timer;
 
    mmu = GB_getMMU (gb);
+   memory = MMU_getMemory (mmu);
 
+   /* Get timer information */
+   timerControl = MMU_readByte (mmu, 0xFF07);
+   dividerTimer = MMU_readByte (mmu, 0xFF04);
+   timer = MMU_readByte (mmu, 0xFF05);
+
+   /* Update the divider register */
+   dividerCounter += cycles;
+   if (dividerCounter >= (CLOCK_SPEED/TIMER_DIVIDER_FREQ)) {
+      /* Update the timer based on the cycles passed */
+      dividerTimer++;
+      dividerCounter -= (CLOCK_SPEED/TIMER_DIVIDER_FREQ);
+   }
+
+   if (testBit (timerControl, 2)) {
+      /* If the timer is enabled */
+      timerCounter += cycles;
+      frequencyIndex = ((timerControl & 2) << 1) | (timerControl & 1);
+
+      if (timerCounter >= (CLOCK_SPEED/timerFrequencies[frequencyIndex])) {
+         timer++;
+         timerCounter -= (CLOCK_SPEED/timerFrequencies[frequencyIndex]);
+      }
+   }
 }

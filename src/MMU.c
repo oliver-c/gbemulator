@@ -65,6 +65,9 @@ void MMU_writeByte (MMU mmu, int location, byte byteToWrite) {
       mmu->memory[location-0x2000] = byteToWrite;
    } else if (location >= 0x2000 && location <= 0x3FFF) {
       /* Change bank number */
+   } else if (location == 0xFF04) {
+      /* Writing to the divider register, which resets it to zero */
+      mmu->memory[location]= 0;
    } else {
       mmu->memory[location] = byteToWrite;
    }
@@ -86,4 +89,8 @@ void MMU_writeWord (MMU mmu, int location, word wordToWrite) {
 
    MMU_writeByte (mmu, location, LSB);
    MMU_writeByte (mmu, location+1, MSB);
+}
+
+byte * MMU_getMemory (MMU mmu) {
+   return mmu->memory;
 }

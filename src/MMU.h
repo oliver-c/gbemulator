@@ -48,4 +48,7 @@ void MMU_writeByte (MMU mmu, int location, byte byteToWrite);
 word MMU_readWord (MMU mmu, int location);
 void MMU_writeWord (MMU mmu, int location, word wordToWrite);
 
+/* Direct access to the mapped memory */
+byte * MMU_getMemory (MMU mmu);
+
 #endif

@@ -30,7 +30,7 @@ void Timer_free (Timer timer) {
 void Timer_start (Timer timer) {
    if (!(timer->running)) {
       timer->running = TRUE;
-      timer->StartTime = SDL_GetTicks ();
+      timer->startTime = SDL_GetTicks ();
    }
 }
 
