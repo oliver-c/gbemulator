@@ -8,13 +8,6 @@
 #define NUM_SCANLINES 154
 #define SCANLINE_CYCLES 456
 
-typedef enum GPU_mode {
-   MODE_HBLANK,
-   MODE_VBLANK,
-   MODE_OAM,
-   MODE_VRAM
-} GPU_mode;
-
 GPU GPU_init (GB gb);
 void GPU_free (GPU gpu);
 
