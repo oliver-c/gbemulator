@@ -81,23 +81,23 @@ void GPU_updateLCDStatus (GPU gpu) {
    if (currentLine < NUM_VISIBLE_SCANLINES) {
       if (gpu->scanlineCounter <= 80) {
          /* Mode 2 */   
-         clearBit (&status, 1); 
-         setBit (&status, 2); 
+         clearBit (&status, 0); 
+         setBit (&status, 1); 
          requestInterrupt = testBit (status, 5);
       } else if (gpu->scanlineCounter <= 172) {
          /* Mode 3 */    
+         setBit (&status, 0);
          setBit (&status, 1);
-         setBit (&status, 2);
       } else {
          /* Mode 0, H-Blank */
-         clearBit (&status, 1);
          clearBit (&status, 0);
+         clearBit (&status, 1);
          requestInterrupt = testBit (status, 3);
       }
    } else {
       /* Mode 1, V-Blank */    
-      clearBit (&status, 2);
-      setBit (&status, 1);
+      clearBit (&status, 1);
+      setBit (&status, 0);
       requestInterrupt = testBit (status, 4);
       GB_requestInterrupt (gpu->gb, INT_VBLANK);
    }
