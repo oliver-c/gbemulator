@@ -79,10 +79,11 @@ void GB_run (GB gb) {
          /* delay */
       }
 
-      GUI_handleEvents (gb->gui);
-      GB_handleTimers (gb, cyclesThisIteration);
       GPU_update (gb->gpu, cyclesThisIteration);
+      GB_handleTimers (gb, cyclesThisIteration);
       cyclesSoFar += GB_handleInterrupts (gb);
+
+      GUI_update (gb->gui);
    }
 }
 

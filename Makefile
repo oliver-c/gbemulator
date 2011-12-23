@@ -1,7 +1,7 @@
 include Makefile.common
 
 CC = ccache gcc
-CFLAGS = -g -Wall -Werror -Wfatal-errors -pedantic `sdl-config --cflags`
+CFLAGS = -g -Wall -Wfatal-errors -pedantic `sdl-config --cflags`
 LIBS = `sdl-config --libs`
 
 all: $(OBJS)    
