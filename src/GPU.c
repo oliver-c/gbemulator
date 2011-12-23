@@ -57,7 +57,8 @@ void GPU_updateScanline (GPU gpu, int cycles) {
    if (gpu->scanlineCounter >= SCANLINE_CYCLES) {
       /* Draw the current scanline before moving on
          to the next */
-      GPU_drawScanline (gpu);
+      if (currentLine < NUM_VISIBLE_SCANLINES)
+         GPU_drawScanline (gpu);
 
       currentLine++;
       gpu->scanlineCounter -= SCANLINE_CYCLES;
@@ -87,6 +88,7 @@ void GPU_drawBackground (GPU gpu) {
    int tileIndexLocation;
    int tileIndex;
    int tileVerticalOffset;
+   int framebufferIndex;
 
    mmu = GB_getMMU (gpu->gb);
    gui = GB_getGUI (gpu->gb);
@@ -116,10 +118,13 @@ void GPU_drawBackground (GPU gpu) {
          tileVerticalOffset = currentLine % BG_TILE_HEIGHT;
 
          for (j = 0; j < BG_TILE_WIDTH; j++) {
+            /* Temp */
             sourceColour.r = 255;
             sourceColour.g = 255;
             sourceColour.b = 255;
-            pixels[currentLine*WINDOW_WIDTH + (BG_TILE_WIDTH*i + j)] = sourceColour;
+            framebufferIndex = currentLine*WINDOW_WIDTH + (BG_TILE_WIDTH*i + j);
+            assert (framebufferIndex < (WINDOW_WIDTH*WINDOW_HEIGHT));
+            pixels[framebufferIndex] = sourceColour;
          }
       }
    } else {
