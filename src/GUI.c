@@ -5,6 +5,7 @@
 
 #include "GB.h"
 #include "GUI.h"
+#include "GPU.h"
 
 #include "types.h"
 
@@ -38,6 +39,26 @@ void GUI_free (GUI gui) {
 }
 
 void GUI_update (GUI gui) {
+   int i, j;
+   Uint32 *screenPixels;
+   colour currentColour;
+
+   /* Update screen */
+   SDL_LockSurface (gui->screen);
+
+   for (i = 0; i < WINDOW_HEIGHT; i++) {
+      screenPixels = (Uint32 *)(gui->screen->pixels) + (WINDOW_WIDTH*i);
+
+      for (j = 0; j < WINDOW_WIDTH; j++) {
+         currentColour = gui->framebuffer[WINDOW_WIDTH*i + j];
+         screenPixels[j] = SDL_MapRGB (gui->screen->format, currentColour.r, 
+                                     currentColour.g, currentColour.b); 
+      }
+   }
+
+   SDL_UnlockSurface (gui->screen);
+   SDL_Flip (gui->screen);
+
    GUI_handleEvents (gui);
 }
 
