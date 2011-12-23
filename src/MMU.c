@@ -55,6 +55,8 @@ byte MMU_readByte (MMU mmu, int location) {
 }
 
 void MMU_writeByte (MMU mmu, int location, byte byteToWrite) {
+   int i, address;
+
    if (location >= 0xC000 && location <= 0xDE00) {
       /* Echo of RAM */
       mmu->memory[location] = byteToWrite;
@@ -71,6 +73,12 @@ void MMU_writeByte (MMU mmu, int location, byte byteToWrite) {
    } else if (location == 0xFF44) {
       /* Writing to the scanline register, which resets it to zero */
       mmu->memory[location] = 0;
+   } else if (location == 0xFF06) {
+      /* DMA transfer */
+      address = byteToWrite * 0x100;      
+      for (i = 0; i <= 0x9F; i++) {
+         mmu->memory[0xFE00+i] = mmu->memory[address+i];
+      }
    } else {
       mmu->memory[location] = byteToWrite;
    }

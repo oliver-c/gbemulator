@@ -14,9 +14,12 @@ struct GPU {
    int scanlineCounter;
 };
 
+/* Updates the scanline */
+void GPU_updateScanline (GPU gpu, int cycles);
+void GPU_drawScanline (GPU gpu);
+
 /* Updates the LCD status register, also requests interrupts
    if necessary */
-void GPU_updateScanline (GPU gpu, int cycles);
 void GPU_updateLCDStatus (GPU gpu);
 
 GPU GPU_init (GB gb) {
@@ -50,6 +53,10 @@ void GPU_updateScanline (GPU gpu, int cycles) {
    currentLine = MMU_readByte (mmu, 0xFF44);
 
    if (gpu->scanlineCounter >= SCANLINE_CYCLES) {
+      /* Draw the current scanline before moving on
+         to the next */
+      GPU_drawScanline (gpu);
+
       currentLine++;
       gpu->scanlineCounter -= SCANLINE_CYCLES;
    }
@@ -59,6 +66,10 @@ void GPU_updateScanline (GPU gpu, int cycles) {
    }
 
    memory[0xFF44] = currentLine;
+}
+
+void GPU_drawScanline (GPU gpu) {
+
 }
 
 void GPU_updateLCDStatus (GPU gpu) {
