@@ -40,12 +40,12 @@ void CPU_free (CPU cpu) {
 }
 
 word CPU_get16bitRegisterValue (CPU cpu, register16 r) {
-   assert (0 <= r && r < NUM_REGISTERS);
+   assert (r < NUM_REGISTERS);
    return cpu->registers[r].value;
 }
 
 void CPU_set16bitRegisterValue (CPU cpu, register16 r, word value) {
-   assert (0 <= r && r < NUM_REGISTERS);
+   assert (r < NUM_REGISTERS);
    cpu->registers[r].value = value;
 }
 

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -13,6 +14,7 @@
 struct GPU {
    GB gb;
    int scanlineCounter;
+   colour bgPalette[NUM_COLOURS];
 };
 
 /* Updates the scanline */
@@ -39,6 +41,44 @@ void GPU_free (GPU gpu) {
 }
 
 void GPU_update (GPU gpu, int cycles) {
+   MMU mmu;
+   byte bgPaletteData;
+   int i, curColourIndex;
+
+   /* Get background palette */
+   mmu = GB_getMMU (gpu->gb);
+   bgPaletteData = MMU_readByte (mmu, 0xFF47); 
+
+   for (i = 0; i < NUM_COLOURS; i++) {
+      curColourIndex = 0;
+      if (testBit (bgPaletteData, 2*i)) {
+         curColourIndex |= 1;
+      }
+
+      if (testBit (bgPaletteData, 2*i + 1)) {
+         curColourIndex |= 2;
+      }
+
+      assert (curColourIndex >= 0 && curColourIndex < 4);
+
+      switch (curColourIndex) {
+         case 0:
+            gpu->bgPalette[i] = COLOUR_WHITE;
+            break;
+         case 1:
+            gpu->bgPalette[i] = COLOUR_LIGHTGRAY;
+            break;
+         case 2:
+            gpu->bgPalette[i] = COLOUR_DARKGRAY;
+            break;
+         case 3:
+            gpu->bgPalette[i] = COLOUR_BLACK;
+            break;
+         default:
+            break;
+      }
+   }
+
    GPU_updateScanline (gpu, cycles);
    GPU_updateLCDStatus (gpu);
 }
@@ -80,15 +120,18 @@ void GPU_drawBackground (GPU gpu) {
    MMU mmu;
    byte lcdControl;
    colour *pixels;
-   colour sourceColour;
    int i, j;
    int currentLine;
    int verticalTileIndex;
    int scrollY;
    int tileIndexLocation;
-   int tileIndex;
+   byte tileIndex;
+   signed_byte signedTileIndex;
    int tileVerticalOffset;
    int framebufferIndex;
+   int tileDataAddress;
+   int colourIndex;
+   byte first, second;
 
    mmu = GB_getMMU (gpu->gb);
    gui = GB_getGUI (gpu->gb);
@@ -117,24 +160,38 @@ void GPU_drawBackground (GPU gpu) {
          tileIndex = MMU_readByte (mmu, tileIndexLocation);
          tileVerticalOffset = currentLine % BG_TILE_HEIGHT;
 
-         for (j = 0; j < BG_TILE_WIDTH; j++) {
-            /* Temp */
-            sourceColour.r = 255;
-            sourceColour.g = 255;
-            sourceColour.b = 255;
+         if (!testBit (lcdControl, 4)) {
+            /* Tile data from 8800-97FF */
+            tileDataAddress = 0x8800 + (TILE_SIZE_BYTES * tileIndex);     
+            assert (tileDataAddress <= 0x97FF);
+         } else {
+            /* Tile data from 8000-8FFF */
+            signedTileIndex = (signed_byte)tileIndex;
+            tileDataAddress = 0x8000 + (TILE_SIZE_BYTES * (signedTileIndex + 128));     
+            assert (tileDataAddress <= 0x8FFF);
+         }
+
+         /* Read the bytes that contain the pixel data */
+         first = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset);
+         second = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset + 1);
+
+
+         for (j = BG_TILE_WIDTH-1; j >= 0; j--) {
             framebufferIndex = currentLine*WINDOW_WIDTH + (BG_TILE_WIDTH*i + j);
             assert (framebufferIndex < (WINDOW_WIDTH*WINDOW_HEIGHT));
-            pixels[framebufferIndex] = sourceColour;
+
+            colourIndex = 0;
+            if (testBit (first, j)) colourIndex |= 1;
+            if (testBit (second, j)) colourIndex |= 2;
+
+            /* Temp */
+            pixels[framebufferIndex] = gpu->bgPalette[colourIndex];
          }
       }
    } else {
       /* Background is white */ 
-      sourceColour.r = 255;
-      sourceColour.g = 255;
-      sourceColour.b = 255;
-      
       for (i = 0; i < WINDOW_WIDTH; i++) {
-         pixels[currentLine*WINDOW_WIDTH + i] = sourceColour;
+         pixels[currentLine*WINDOW_WIDTH + i] = COLOUR_WHITE;
       }
    }
 }

@@ -16,9 +16,15 @@
 #define BG_NUM_HORIZONTAL_TILES 32
 #define BG_NUM_VERTICAL_TILES 32
 
+#define NUM_COLOURS 4
+
+static const colour COLOUR_WHITE = {255, 255, 255};
+static const colour COLOUR_LIGHTGRAY = {190, 190, 190};
+static const colour COLOUR_DARKGRAY = {60, 60, 60};
+static const colour COLOUR_BLACK = {0, 0, 0};
+
 GPU GPU_init (GB gb);
 void GPU_free (GPU gpu);
-
 void GPU_update (GPU gpu, int cycles);
 
 #endif

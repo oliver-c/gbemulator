@@ -77,6 +77,7 @@ void GB_run (GB gb) {
 
       if (cyclesSoFar >= CLOCK_SPEED) {
          /* delay */
+         cyclesSoFar = 0;
       }
 
       GPU_update (gb->gpu, cyclesThisIteration);

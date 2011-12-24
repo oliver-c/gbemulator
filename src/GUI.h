@@ -11,12 +11,6 @@
 #define WINDOW_WIDTH 160
 #define WINDOW_HEIGHT 144
 
-typedef struct colour {
-   byte r;
-   byte g;
-   byte b;
-} colour;
-
 GUI GUI_init (GB gb);
 void GUI_free (GUI gui);
 void GUI_update (GUI gui);
