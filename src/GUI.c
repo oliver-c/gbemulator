@@ -14,6 +14,7 @@ struct GUI {
    GB gb;
    SDL_Surface *screen;
    colour framebuffer[WINDOW_WIDTH * WINDOW_HEIGHT];
+   bool flippedThisFrame;
 };
 
 void GUI_handleEvents (GUI gui);
@@ -23,6 +24,7 @@ GUI GUI_init (GB gb) {
    assert (newGUI != NULL);
 
    newGUI->gb = gb;
+   newGUI->flippedThisFrame = FALSE;
 
    SDL_Init (SDL_INIT_VIDEO); 
    
@@ -53,6 +55,7 @@ void GUI_update (GUI gui) {
    SDL_LockSurface (gui->screen);
 
    if (currentLine < NUM_VISIBLE_SCANLINES) {
+      gui->flippedThisFrame = FALSE;
       screenPixels = (Uint32 *)(gui->screen->pixels) + (WINDOW_WIDTH*currentLine);
 
       for (j = 0; j < WINDOW_WIDTH; j++) {
@@ -61,10 +64,14 @@ void GUI_update (GUI gui) {
                                        currentColour.g, currentColour.b); 
       }
    }
+   
+   if (currentLine >= NUM_VISIBLE_SCANLINES && !gui->flippedThisFrame) {
+      /* Entered V-Blank, flip the SDL screen once */
+      SDL_Flip (gui->screen);
+      gui->flippedThisFrame = TRUE;
+   }
 
    SDL_UnlockSurface (gui->screen);
-   SDL_Flip (gui->screen);
-
    GUI_handleEvents (gui);
 }
 
