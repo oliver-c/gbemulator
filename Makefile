@@ -1,6 +1,6 @@
 include Makefile.common
 
-CC = ccache gcc
+CC = clang
 CFLAGS = -g -Wall -Wfatal-errors -pedantic `sdl-config --cflags`
 LIBS = `sdl-config --libs`
 
