@@ -15,12 +15,17 @@ struct GPU {
    GB gb;
    int scanlineCounter;
    colour bgPalette[NUM_COLOURS];
+   colour objPalette0[NUM_COLOURS];
+   colour objPalette1[NUM_COLOURS];
 };
 
 /* Updates the scanline */
 void GPU_updateScanline (GPU gpu, int cycles);
 void GPU_drawScanline (GPU gpu);
 void GPU_drawBackground (GPU gpu); 
+void GPU_drawSprites (GPU gpu);
+
+void GPU_getPalette (GPU gpu, palette type);
 
 /* Updates the LCD status register, also requests interrupts
    if necessary */
@@ -41,44 +46,6 @@ void GPU_free (GPU gpu) {
 }
 
 void GPU_update (GPU gpu, int cycles) {
-   MMU mmu;
-   byte bgPaletteData;
-   int i, curColourIndex;
-
-   /* Get background palette */
-   mmu = GB_getMMU (gpu->gb);
-   bgPaletteData = MMU_readByte (mmu, 0xFF47); 
-
-   for (i = 0; i < NUM_COLOURS; i++) {
-      curColourIndex = 0;
-      if (testBit (bgPaletteData, 2*i)) {
-         curColourIndex |= 1;
-      }
-
-      if (testBit (bgPaletteData, 2*i + 1)) {
-         curColourIndex |= 2;
-      }
-
-      assert (curColourIndex >= 0 && curColourIndex < 4);
-
-      switch (curColourIndex) {
-         case 0:
-            gpu->bgPalette[i] = COLOUR_WHITE;
-            break;
-         case 1:
-            gpu->bgPalette[i] = COLOUR_LIGHTGRAY;
-            break;
-         case 2:
-            gpu->bgPalette[i] = COLOUR_DARKGRAY;
-            break;
-         case 3:
-            gpu->bgPalette[i] = COLOUR_BLACK;
-            break;
-         default:
-            break;
-      }
-   }
-
    GPU_updateScanline (gpu, cycles);
    GPU_updateLCDStatus (gpu);
 }
@@ -112,7 +79,12 @@ void GPU_updateScanline (GPU gpu, int cycles) {
 }
 
 void GPU_drawScanline (GPU gpu) {
+   GPU_getPalette (gpu, PALETTE_BG);
+   GPU_getPalette (gpu, PALETTE_OBJ0);
+   GPU_getPalette (gpu, PALETTE_OBJ1);
+
    GPU_drawBackground (gpu);
+   GPU_drawSprites (gpu);
 }
 
 void GPU_drawBackground (GPU gpu) {
@@ -183,7 +155,6 @@ void GPU_drawBackground (GPU gpu) {
             if (testBit (first, j)) colourIndex |= 1;
             if (testBit (second, j)) colourIndex |= 2;
 
-            /* Temp */
             pixels[framebufferIndex] = gpu->bgPalette[colourIndex];
          }
       }
@@ -191,6 +162,61 @@ void GPU_drawBackground (GPU gpu) {
       /* Background is white */ 
       for (i = 0; i < WINDOW_WIDTH; i++) {
          pixels[currentLine*WINDOW_WIDTH + i] = COLOUR_WHITE;
+      }
+   }
+}
+
+void GPU_drawSprites (GPU gpu) {
+   
+}
+
+void GPU_getPalette (GPU gpu, palette type) {
+   MMU mmu;
+   byte paletteData;
+   colour *palette;
+   int i;
+   int curColourIndex;
+
+   mmu = GB_getMMU (gpu->gb);
+   
+   if (type == PALETTE_BG) {
+      paletteData = MMU_readByte (mmu, 0xFF47); 
+      palette = gpu->bgPalette;
+   } else if (type == PALETTE_OBJ0) {
+      paletteData = MMU_readByte (mmu, 0xFF48); 
+      palette = gpu->objPalette0;
+   } else if (type == PALETTE_OBJ0) {
+      paletteData = MMU_readByte (mmu, 0xFF49); 
+      palette = gpu->objPalette1;
+   }
+
+   for (i = 0; i < NUM_COLOURS; i++) {
+      curColourIndex = 0;
+      if (testBit (paletteData, 2*i)) {
+         curColourIndex |= 1;
+      }
+
+      if (testBit (paletteData, 2*i + 1)) {
+         curColourIndex |= 2;
+      }
+
+      assert (curColourIndex >= 0 && curColourIndex < 4);
+
+      switch (curColourIndex) {
+         case 0:
+            palette[i] = COLOUR_WHITE;
+            break;
+         case 1:
+            palette[i] = COLOUR_LIGHTGRAY;
+            break;
+         case 2:
+            palette[i] = COLOUR_DARKGRAY;
+            break;
+         case 3:
+            palette[i] = COLOUR_BLACK;
+            break;
+         default:
+            break;
       }
    }
 }

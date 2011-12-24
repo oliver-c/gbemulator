@@ -18,6 +18,12 @@
 
 #define NUM_COLOURS 4
 
+typedef enum palette {
+   PALETTE_BG,
+   PALETTE_OBJ0, 
+   PALETTE_OBJ1
+} palette;
+
 static const colour COLOUR_WHITE = {255, 255, 255};
 static const colour COLOUR_LIGHTGRAY = {190, 190, 190};
 static const colour COLOUR_DARKGRAY = {60, 60, 60};
