@@ -175,9 +175,8 @@ void GPU_drawBackground (GPU gpu) {
          first = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset);
          second = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset + 1);
 
-
          for (j = BG_TILE_WIDTH-1; j >= 0; j--) {
-            framebufferIndex = currentLine*WINDOW_WIDTH + (BG_TILE_WIDTH*i + j);
+            framebufferIndex = currentLine*WINDOW_WIDTH + (BG_TILE_WIDTH*i + 7-j);
             assert (framebufferIndex < (WINDOW_WIDTH*WINDOW_HEIGHT));
 
             colourIndex = 0;
