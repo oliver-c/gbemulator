@@ -40,7 +40,7 @@ GUI GUI_init (GB gb) {
    
    SDL_WM_SetCaption (WINDOW_CAPTION, NULL); 
    newGUI->screen = SDL_SetVideoMode (WINDOW_WIDTH, WINDOW_HEIGHT, 0, 
-                                      SDL_DOUBLEBUF | SDL_HWPALETTE);
+                                      SDL_DOUBLEBUF | SDL_HWSURFACE);
 
    return newGUI;
 }
@@ -68,7 +68,7 @@ void GUI_update (GUI gui) {
    
    if (currentLine >= NUM_VISIBLE_SCANLINES && !gui->flippedThisFrame) {
       /* Entered V-Blank, flip the SDL screen once */
-      SDL_Flip (gui->screen);
+      SDL_Flip (gui->screen); 
       gui->flippedThisFrame = TRUE;
       gui->frameCount++;
 
@@ -115,10 +115,6 @@ void GUI_updateJoypad (GUI gui) {
 
 Uint32 * GUI_getFramebuffer (GUI gui) {
    return gui->screen->pixels;
-}
-
-SDL_PixelFormat * GUI_getScreenFormat (GUI gui) {
-   return gui->screen->format;
 }
 
 void GUI_updateScanline (GUI gui, int scanlineNumber) {

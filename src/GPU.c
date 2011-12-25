@@ -12,10 +12,10 @@
 #include "bitOperations.h"
 #include "types.h"
 
-#define COLOUR_WHITE SDL_MapRGB (screenFormat, 255, 255, 255)
-#define COLOUR_LIGHTGRAY SDL_MapRGB (screenFormat, 190, 190, 190)
-#define COLOUR_DARKGRAY SDL_MapRGB (screenFormat, 60, 60, 60)
-#define COLOUR_BLACK SDL_MapRGB (screenFormat, 0, 0, 0)
+#define COLOUR_WHITE     0xffffff
+#define COLOUR_LIGHTGRAY 0xbebebe
+#define COLOUR_DARKGRAY  0x3c3c3c
+#define COLOUR_BLACK     0x000000
 
 typedef enum palette {
    PALETTE_BG,
@@ -105,11 +105,9 @@ void GPU_updateScanline (GPU gpu, int cycles) {
 
 void GPU_drawScanline (GPU gpu) {
    MMU mmu;
-   GUI gui;
    int currentLine;
 
    mmu = GB_getMMU (gpu->gb);
-   gui = GB_getGUI (gpu->gb);
 
    currentLine = MMU_readByte (mmu, 0xFF44);
 
@@ -137,12 +135,10 @@ void GPU_drawBackground (GPU gpu) {
    int framebufferIndex;
    int tileDataAddress;
    int colourIndex;
-   SDL_PixelFormat *screenFormat;
    byte first, second;
 
    mmu = GB_getMMU (gpu->gb);
    gui = GB_getGUI (gpu->gb);
-   screenFormat = GUI_getScreenFormat (gui);
 
    lcdControl = MMU_readByte (mmu, 0xFF40);
    currentLine = MMU_readByte (mmu, 0xFF44);
@@ -218,7 +214,6 @@ void GPU_drawSprites (GPU gpu) {
    int framebufferIndex;
    int tileDataAddress;
    int colourIndex;
-   SDL_PixelFormat *screenFormat;
    byte first, second;
 
    mmu = GB_getMMU (gpu->gb);
@@ -229,8 +224,6 @@ void GPU_drawSprites (GPU gpu) {
 
    lcdControl = MMU_readByte (mmu, 0xFF40);
    currentLine = MMU_readByte (mmu, 0xFF44);
-
-   screenFormat = GUI_getScreenFormat (gui);
 
    if (testBit (lcdControl, 1)) {
       /* If sprites are enabled */
@@ -285,12 +278,9 @@ void GPU_getPalette (GPU gpu, int type) {
    GUI gui;
    int i;
    int curColourIndex;
-   SDL_PixelFormat *screenFormat;
 
    mmu = GB_getMMU (gpu->gb);
    gui = GB_getGUI (gpu->gb);
-
-   screenFormat = GUI_getScreenFormat (gui);
    
    if (type == PALETTE_BG) {
       paletteData = MMU_readByte (mmu, 0xFF47); 
