@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "GB.h"
 #include "CPU.h"
@@ -10,6 +11,19 @@
 
 #include "bitOperations.h"
 #include "types.h"
+
+typedef enum palette {
+   PALETTE_BG,
+   PALETTE_OBJ0, 
+   PALETTE_OBJ1
+} palette;
+
+typedef struct spriteAttribute {
+   byte yPos;
+   byte xPos;
+   byte tileNumber;
+   byte flags; 
+} spriteAttribute;
 
 struct GPU {
    GB gb;
@@ -25,7 +39,7 @@ void GPU_drawScanline (GPU gpu);
 void GPU_drawBackground (GPU gpu); 
 void GPU_drawSprites (GPU gpu);
 
-void GPU_getPalette (GPU gpu, palette type);
+void GPU_getPalette (GPU gpu, int type);
 
 /* Updates the LCD status register, also requests interrupts
    if necessary */
@@ -134,12 +148,12 @@ void GPU_drawBackground (GPU gpu) {
 
          if (!testBit (lcdControl, 4)) {
             /* Tile data from 8800-97FF */
-            tileDataAddress = 0x8800 + (TILE_SIZE_BYTES * tileIndex);     
+            signedTileIndex = (signed_byte)tileIndex;
+            tileDataAddress = 0x8800 + (TILE_SIZE_BYTES * (signedTileIndex + 128));     
             assert (tileDataAddress <= 0x97FF);
          } else {
             /* Tile data from 8000-8FFF */
-            signedTileIndex = (signed_byte)tileIndex;
-            tileDataAddress = 0x8000 + (TILE_SIZE_BYTES * (signedTileIndex + 128));     
+            tileDataAddress = 0x8000 + (TILE_SIZE_BYTES * tileIndex);     
             assert (tileDataAddress <= 0x8FFF);
          }
 
@@ -167,10 +181,79 @@ void GPU_drawBackground (GPU gpu) {
 }
 
 void GPU_drawSprites (GPU gpu) {
-   
+   GUI gui;
+   MMU mmu;
+   byte lcdControl;
+   byte *memory;
+   spriteAttribute sprite;
+   colour *pixels;
+   int i;
+   int j;
+   int currentAddress;
+   int spriteHeight;
+   int currentLine;
+   int tileVerticalOffset;
+   int framebufferIndex;
+   int tileDataAddress;
+   int colourIndex;
+   byte first, second;
+
+   mmu = GB_getMMU (gpu->gb);
+   gui = GB_getGUI (gpu->gb);
+
+   memory = MMU_getMemory (mmu);
+   pixels = GUI_getFramebuffer (gui);
+
+   lcdControl = MMU_readByte (mmu, 0xFF40);
+   currentLine = MMU_readByte (mmu, 0xFF44);
+
+   if (testBit (lcdControl, 1)) {
+      /* If sprites are enabled */
+      currentAddress = 0xFE00;
+
+      if (testBit (lcdControl, 2)) {
+         spriteHeight = 16;
+      } else {
+         spriteHeight = 8;
+      }
+
+      for (i = 0; i < NUM_SPRITES; i++) {
+         memcpy (&sprite, memory+(i*sizeof(spriteAttribute)), sizeof(spriteAttribute));
+         sprite.yPos -= 16;
+         sprite.xPos -= 8;
+
+         if (sprite.yPos <= currentLine && (sprite.yPos + spriteHeight) > currentLine && 
+             sprite.xPos >= 0 && sprite.xPos < WINDOW_WIDTH) {
+            /* If this sprite is visible and is part of the current scanline */
+            tileVerticalOffset = currentLine % spriteHeight; 
+            tileDataAddress = 0x8000 + (TILE_SIZE_BYTES*(spriteHeight/8)*(sprite.tileNumber));
+
+            /* Read the bytes that contain the pixel data */
+            first = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset);
+            second = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset + 1);
+
+            for (j = BG_TILE_WIDTH-1; j >= 0; j--) {
+               framebufferIndex = currentLine*WINDOW_WIDTH + sprite.xPos + (7-j);
+               assert (framebufferIndex < (WINDOW_WIDTH*WINDOW_HEIGHT));
+
+               colourIndex = 0;
+               if (testBit (first, j)) colourIndex |= 1;
+               if (testBit (second, j)) colourIndex |= 2;
+
+               if (testBit (sprite.flags, 4)) {
+                  pixels[framebufferIndex] = gpu->objPalette1[colourIndex];
+               } else {
+                  pixels[framebufferIndex] = gpu->objPalette0[colourIndex];
+               }
+            }
+         }
+
+         currentAddress += sizeof(spriteAttribute);    
+      }
+   }
 }
 
-void GPU_getPalette (GPU gpu, palette type) {
+void GPU_getPalette (GPU gpu, int type) {
    MMU mmu;
    byte paletteData;
    colour *palette;
