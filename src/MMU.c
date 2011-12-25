@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -86,7 +87,7 @@ void MMU_writeByte (MMU mmu, int location, byte byteToWrite) {
 
 word MMU_readWord (MMU mmu, int location) {
    word value;
-   value = (MMU_readByte(mmu, location)) & (MMU_readByte(mmu, location+1) << 8);
+   value = (MMU_readByte(mmu, location)) | (MMU_readByte(mmu, location+1) << 8);
 
    return value;
 }
