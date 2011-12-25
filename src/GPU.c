@@ -12,11 +12,6 @@
 #include "bitOperations.h"
 #include "types.h"
 
-#define COLOUR_WHITE     0xffffff
-#define COLOUR_LIGHTGRAY 0xbebebe
-#define COLOUR_DARKGRAY  0x3c3c3c
-#define COLOUR_BLACK     0x000000
-
 typedef enum palette {
    PALETTE_BG,
    PALETTE_OBJ0, 
@@ -33,9 +28,9 @@ typedef struct spriteAttribute {
 struct GPU {
    GB gb;
    int scanlineCounter;
-   Uint32 bgPalette[NUM_COLOURS];
-   Uint32 objPalette0[NUM_COLOURS];
-   Uint32 objPalette1[NUM_COLOURS];
+   Uint8 bgPalette[NUM_COLOURS];
+   Uint8 objPalette0[NUM_COLOURS];
+   Uint8 objPalette1[NUM_COLOURS];
 };
 
 /* Updates the scanline */
@@ -123,7 +118,7 @@ void GPU_drawBackground (GPU gpu) {
    GUI gui;
    MMU mmu;
    byte lcdControl;
-   Uint32 *pixels;
+   Uint8 *pixels;
    int i, j;
    int currentLine;
    int verticalTileIndex;
@@ -204,7 +199,7 @@ void GPU_drawSprites (GPU gpu) {
    byte lcdControl;
    byte *memory;
    spriteAttribute sprite;
-   Uint32 *pixels;
+   Uint8 *pixels;
    int i;
    int j;
    int currentAddress;
@@ -277,7 +272,7 @@ void GPU_drawSprites (GPU gpu) {
 void GPU_getPalette (GPU gpu, int type) {
    MMU mmu;
    byte paletteData;
-   Uint32 *palette;
+   Uint8 *palette;
    GUI gui;
    int i;
    int curColourIndex;

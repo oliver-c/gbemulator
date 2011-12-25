@@ -15,7 +15,6 @@
 GUI GUI_init (GB gb);
 void GUI_free (GUI gui);
 void GUI_update (GUI gui);
-Uint32 * GUI_getFramebuffer (GUI gui);
-SDL_PixelFormat * GUI_getScreenFormat (GUI gui);
+Uint8 * GUI_getFramebuffer (GUI gui);
 
 #endif

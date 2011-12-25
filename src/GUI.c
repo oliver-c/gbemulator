@@ -15,12 +15,14 @@
 struct GUI {
    GB gb;
    SDL_Surface *screen;
+   SDL_Color colours[NUM_COLOURS];
    colour framebuffer[WINDOW_WIDTH * WINDOW_HEIGHT];
    Timer frameTimer;
    bool flippedThisFrame;
    int frameCount;
 };
 
+void GUI_initPalette (GUI gui);
 void GUI_handleEvents (GUI gui);
 void GUI_updateJoypad (GUI gui);
 
@@ -39,8 +41,11 @@ GUI GUI_init (GB gb) {
    SDL_Init (SDL_INIT_VIDEO); 
    
    SDL_WM_SetCaption (WINDOW_CAPTION, NULL); 
-   newGUI->screen = SDL_SetVideoMode (WINDOW_WIDTH, WINDOW_HEIGHT, 0, 
-                                      SDL_DOUBLEBUF | SDL_SWSURFACE);
+   newGUI->screen = SDL_SetVideoMode (WINDOW_WIDTH, WINDOW_HEIGHT, 8, 
+                                      SDL_DOUBLEBUF | SDL_SWSURFACE |
+                                      SDL_HWPALETTE);
+
+   GUI_initPalette (newGUI);
 
    return newGUI;
 }
@@ -83,6 +88,26 @@ void GUI_update (GUI gui) {
    GUI_updateJoypad (gui);
 }
 
+void GUI_initPalette (GUI gui) {
+   gui->colours[COLOUR_WHITE].r = 255;
+   gui->colours[COLOUR_WHITE].g = 255;
+   gui->colours[COLOUR_WHITE].b = 255;
+
+   gui->colours[COLOUR_LIGHTGRAY].r = 190;
+   gui->colours[COLOUR_LIGHTGRAY].g = 190;
+   gui->colours[COLOUR_LIGHTGRAY].b = 190;
+
+   gui->colours[COLOUR_DARKGRAY].r = 60;
+   gui->colours[COLOUR_DARKGRAY].g = 60;
+   gui->colours[COLOUR_DARKGRAY].b = 60;
+
+   gui->colours[COLOUR_BLACK].r = 0;
+   gui->colours[COLOUR_BLACK].g = 0;
+   gui->colours[COLOUR_BLACK].b = 0;
+
+   SDL_SetColors (gui->screen, gui->colours, 0, NUM_COLOURS);
+}
+
 void GUI_handleEvents (GUI gui) {
    SDL_Event event;
 
@@ -112,21 +137,6 @@ void GUI_updateJoypad (GUI gui) {
    MMU_writeByte (mmu, 0xFF00, joypad);
 }
 
-Uint32 * GUI_getFramebuffer (GUI gui) {
+Uint8 * GUI_getFramebuffer (GUI gui) {
    return gui->screen->pixels;
-}
-
-void GUI_updateScanline (GUI gui, int scanlineNumber) {
-   int i;
-   colour *scanline;
-   Uint32 *screenPixels;
-
-   scanline = gui->framebuffer + (scanlineNumber*WINDOW_WIDTH);
-
-   screenPixels = (Uint32 *)(gui->screen->pixels) + (WINDOW_WIDTH*scanlineNumber);
-
-   for (i = 0; i < WINDOW_WIDTH; i++) {
-      screenPixels[i] = SDL_MapRGB (gui->screen->format, scanline[i].r, 
-                                    scanline[i].g, scanline[i].b);
-   }
 }

@@ -20,6 +20,13 @@
 
 #define NUM_SPRITES 40
 
+enum {
+   COLOUR_WHITE,
+   COLOUR_LIGHTGRAY,
+   COLOUR_DARKGRAY,
+   COLOUR_BLACK
+};
+
 GPU GPU_init (GB gb);
 void GPU_free (GPU gpu);
 void GPU_update (GPU gpu, int cycles);
