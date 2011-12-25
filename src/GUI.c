@@ -7,6 +7,7 @@
 #include "GUI.h"
 #include "GPU.h"
 #include "MMU.h"
+#include "Timer.h"
 
 #include "types.h"
 #include "bitOperations.h"
@@ -15,7 +16,9 @@ struct GUI {
    GB gb;
    SDL_Surface *screen;
    colour framebuffer[WINDOW_WIDTH * WINDOW_HEIGHT];
+   Timer frameTimer;
    bool flippedThisFrame;
+   int frameCount;
 };
 
 void GUI_handleEvents (GUI gui);
@@ -27,6 +30,11 @@ GUI GUI_init (GB gb) {
 
    newGUI->gb = gb;
    newGUI->flippedThisFrame = FALSE;
+   newGUI->frameCount = 0;
+   newGUI->frameTimer = Timer_init ();
+
+   Timer_reset (newGUI->frameTimer);
+   Timer_start (newGUI->frameTimer);
 
    SDL_Init (SDL_INIT_VIDEO); 
    
@@ -39,16 +47,14 @@ GUI GUI_init (GB gb) {
 
 void GUI_free (GUI gui) {
    SDL_FreeSurface (gui->screen);
+   Timer_free (gui->frameTimer);
 
    free (gui);
 }
 
 void GUI_update (GUI gui) {
    MMU mmu;
-   int j;
    int currentLine;
-   Uint32 *screenPixels;
-   colour currentColour;
 
    mmu = GB_getMMU (gui->gb);
    currentLine = MMU_readByte (mmu, 0xFF44);
@@ -58,19 +64,19 @@ void GUI_update (GUI gui) {
 
    if (currentLine < NUM_VISIBLE_SCANLINES) {
       gui->flippedThisFrame = FALSE;
-      screenPixels = (Uint32 *)(gui->screen->pixels) + (WINDOW_WIDTH*currentLine);
-
-      for (j = 0; j < WINDOW_WIDTH; j++) {
-         currentColour = gui->framebuffer[WINDOW_WIDTH*currentLine + j];
-         screenPixels[j] = SDL_MapRGB (gui->screen->format, currentColour.r, 
-                                       currentColour.g, currentColour.b); 
-      }
    }
    
    if (currentLine >= NUM_VISIBLE_SCANLINES && !gui->flippedThisFrame) {
       /* Entered V-Blank, flip the SDL screen once */
       SDL_Flip (gui->screen);
       gui->flippedThisFrame = TRUE;
+      gui->frameCount++;
+
+      if (Timer_getTicks (gui->frameTimer) >= 5000) {
+         printf ("fps = %.2lf\n", (double)(gui->frameCount)/5);
+         gui->frameCount = 0;
+         Timer_reset (gui->frameTimer);
+      }
    }
 
    SDL_UnlockSurface (gui->screen);
@@ -107,6 +113,25 @@ void GUI_updateJoypad (GUI gui) {
    MMU_writeByte (mmu, 0xFF00, joypad);
 }
 
-colour * GUI_getFramebuffer (GUI gui) {
-   return gui->framebuffer;
+Uint32 * GUI_getFramebuffer (GUI gui) {
+   return gui->screen->pixels;
+}
+
+SDL_PixelFormat * GUI_getScreenFormat (GUI gui) {
+   return gui->screen->format;
+}
+
+void GUI_updateScanline (GUI gui, int scanlineNumber) {
+   int i;
+   colour *scanline;
+   Uint32 *screenPixels;
+
+   scanline = gui->framebuffer + (scanlineNumber*WINDOW_WIDTH);
+
+   screenPixels = (Uint32 *)(gui->screen->pixels) + (WINDOW_WIDTH*scanlineNumber);
+
+   for (i = 0; i < WINDOW_WIDTH; i++) {
+      screenPixels[i] = SDL_MapRGB (gui->screen->format, scanline[i].r, 
+                                    scanline[i].g, scanline[i].b);
+   }
 }

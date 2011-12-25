@@ -12,6 +12,11 @@
 #include "bitOperations.h"
 #include "types.h"
 
+#define COLOUR_WHITE SDL_MapRGB (screenFormat, 255, 255, 255)
+#define COLOUR_LIGHTGRAY SDL_MapRGB (screenFormat, 190, 190, 190)
+#define COLOUR_DARKGRAY SDL_MapRGB (screenFormat, 60, 60, 60)
+#define COLOUR_BLACK SDL_MapRGB (screenFormat, 0, 0, 0)
+
 typedef enum palette {
    PALETTE_BG,
    PALETTE_OBJ0, 
@@ -28,9 +33,9 @@ typedef struct spriteAttribute {
 struct GPU {
    GB gb;
    int scanlineCounter;
-   colour bgPalette[NUM_COLOURS];
-   colour objPalette0[NUM_COLOURS];
-   colour objPalette1[NUM_COLOURS];
+   Uint32 bgPalette[NUM_COLOURS];
+   Uint32 objPalette0[NUM_COLOURS];
+   Uint32 objPalette1[NUM_COLOURS];
 };
 
 /* Updates the scanline */
@@ -99,6 +104,15 @@ void GPU_updateScanline (GPU gpu, int cycles) {
 }
 
 void GPU_drawScanline (GPU gpu) {
+   MMU mmu;
+   GUI gui;
+   int currentLine;
+
+   mmu = GB_getMMU (gpu->gb);
+   gui = GB_getGUI (gpu->gb);
+
+   currentLine = MMU_readByte (mmu, 0xFF44);
+
    GPU_getPalette (gpu, PALETTE_BG);
    GPU_getPalette (gpu, PALETTE_OBJ0);
    GPU_getPalette (gpu, PALETTE_OBJ1);
@@ -111,7 +125,7 @@ void GPU_drawBackground (GPU gpu) {
    GUI gui;
    MMU mmu;
    byte lcdControl;
-   colour *pixels;
+   Uint32 *pixels;
    int i, j;
    int currentLine;
    int verticalTileIndex;
@@ -123,10 +137,12 @@ void GPU_drawBackground (GPU gpu) {
    int framebufferIndex;
    int tileDataAddress;
    int colourIndex;
+   SDL_PixelFormat *screenFormat;
    byte first, second;
 
    mmu = GB_getMMU (gpu->gb);
    gui = GB_getGUI (gpu->gb);
+   screenFormat = GUI_getScreenFormat (gui);
 
    lcdControl = MMU_readByte (mmu, 0xFF40);
    currentLine = MMU_readByte (mmu, 0xFF44);
@@ -192,7 +208,7 @@ void GPU_drawSprites (GPU gpu) {
    byte lcdControl;
    byte *memory;
    spriteAttribute sprite;
-   colour *pixels;
+   Uint32 *pixels;
    int i;
    int j;
    int currentAddress;
@@ -202,6 +218,7 @@ void GPU_drawSprites (GPU gpu) {
    int framebufferIndex;
    int tileDataAddress;
    int colourIndex;
+   SDL_PixelFormat *screenFormat;
    byte first, second;
 
    mmu = GB_getMMU (gpu->gb);
@@ -212,6 +229,8 @@ void GPU_drawSprites (GPU gpu) {
 
    lcdControl = MMU_readByte (mmu, 0xFF40);
    currentLine = MMU_readByte (mmu, 0xFF44);
+
+   screenFormat = GUI_getScreenFormat (gui);
 
    if (testBit (lcdControl, 1)) {
       /* If sprites are enabled */
@@ -262,11 +281,16 @@ void GPU_drawSprites (GPU gpu) {
 void GPU_getPalette (GPU gpu, int type) {
    MMU mmu;
    byte paletteData;
-   colour *palette;
+   Uint32 *palette;
+   GUI gui;
    int i;
    int curColourIndex;
+   SDL_PixelFormat *screenFormat;
 
    mmu = GB_getMMU (gpu->gb);
+   gui = GB_getGUI (gpu->gb);
+
+   screenFormat = GUI_getScreenFormat (gui);
    
    if (type == PALETTE_BG) {
       paletteData = MMU_readByte (mmu, 0xFF47); 
