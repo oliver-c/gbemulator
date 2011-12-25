@@ -102,18 +102,22 @@ void GB_requestInterrupt (GB gb, int interrupt) {
 }
 
 CPU GB_getCPU (GB gb) {
+   assert (gb != NULL);
    return (gb->cpu);
 }
 
 MMU GB_getMMU (GB gb) {
+   assert (gb != NULL);
    return (gb->mmu);
 }
 
 Cartridge GB_getCartridge (GB gb) {
+   assert (gb != NULL);
    return (gb->cartridge);
 }
 
 GUI GB_getGUI (GB gb) {
+   assert (gb != NULL);
    return (gb->gui);
 }
 
@@ -131,7 +135,6 @@ void GB_runBootSequence (GB gb) {
    memory = MMU_getMemory (gb->mmu);
 
    /* Initialise values in memory */
-   memory[0xFF00] = 0xFF;
    memory[0xFF05] = 0x00;
    memory[0xFF06] = 0x00;
    memory[0xFF07] = 0x00;

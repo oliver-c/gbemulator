@@ -274,10 +274,14 @@ void GPU_getPalette (GPU gpu, int type) {
    } else if (type == PALETTE_OBJ0) {
       paletteData = MMU_readByte (mmu, 0xFF48); 
       palette = gpu->objPalette0;
-   } else if (type == PALETTE_OBJ0) {
+   } else if (type == PALETTE_OBJ1) {
       paletteData = MMU_readByte (mmu, 0xFF49); 
       palette = gpu->objPalette1;
+   } else {
+      palette = NULL;
    }
+
+   assert (palette != NULL);
 
    for (i = 0; i < NUM_COLOURS; i++) {
       curColourIndex = 0;
