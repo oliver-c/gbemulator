@@ -40,7 +40,7 @@ GUI GUI_init (GB gb) {
    
    SDL_WM_SetCaption (WINDOW_CAPTION, NULL); 
    newGUI->screen = SDL_SetVideoMode (WINDOW_WIDTH, WINDOW_HEIGHT, 0, 
-                                      SDL_DOUBLEBUF | SDL_HWSURFACE);
+                                      SDL_DOUBLEBUF | SDL_SWSURFACE);
 
    return newGUI;
 }
@@ -60,7 +60,6 @@ void GUI_update (GUI gui) {
    currentLine = MMU_readByte (mmu, 0xFF44);
 
    /* Update screen */
-   SDL_LockSurface (gui->screen);
 
    if (currentLine < NUM_VISIBLE_SCANLINES) {
       gui->flippedThisFrame = FALSE;
@@ -72,6 +71,8 @@ void GUI_update (GUI gui) {
       gui->flippedThisFrame = TRUE;
       gui->frameCount++;
 
+      GUI_handleEvents (gui);
+
       if (Timer_getTicks (gui->frameTimer) >= 5000) {
          printf ("fps = %.2lf\n", (double)(gui->frameCount)/5);
          gui->frameCount = 0;
@@ -79,8 +80,6 @@ void GUI_update (GUI gui) {
       }
    }
 
-   SDL_UnlockSurface (gui->screen);
-   GUI_handleEvents (gui);
    GUI_updateJoypad (gui);
 }
 
