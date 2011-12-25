@@ -9,6 +9,7 @@
 #include "MMU.h"
 
 #include "types.h"
+#include "bitOperations.h"
 
 struct GUI {
    GB gb;
@@ -18,6 +19,7 @@ struct GUI {
 };
 
 void GUI_handleEvents (GUI gui);
+void GUI_updateJoypad (GUI gui);
 
 GUI GUI_init (GB gb) {
    GUI newGUI = (GUI)malloc(sizeof(struct GUI));
@@ -73,6 +75,7 @@ void GUI_update (GUI gui) {
 
    SDL_UnlockSurface (gui->screen);
    GUI_handleEvents (gui);
+   GUI_updateJoypad (gui);
 }
 
 void GUI_handleEvents (GUI gui) {
@@ -83,6 +86,25 @@ void GUI_handleEvents (GUI gui) {
          GB_setRunning (gui->gb, FALSE);
       }
    }
+}
+
+void GUI_updateJoypad (GUI gui) {
+   MMU mmu;
+   byte joypad;
+
+   mmu = GB_getMMU (gui->gb);
+   joypad = MMU_readByte (mmu, 0xFF00);
+
+   setBit (&joypad, 7);
+   setBit (&joypad, 6);
+
+   /* Temporary, no buttons pressed */
+   setBit (&joypad, 3);
+   setBit (&joypad, 2);
+   setBit (&joypad, 1);
+   setBit (&joypad, 0);
+
+   MMU_writeByte (mmu, 0xFF00, joypad);
 }
 
 colour * GUI_getFramebuffer (GUI gui) {

@@ -7,6 +7,8 @@
 #include "CPU_instructions.h"
 #include "MMU.h"
 
+#include "bitOperations.h"
+
 struct CPU {
    GB gb;
 
@@ -125,6 +127,17 @@ int CPU_step (CPU cpu) {
    /* Fetch the opcode for the next instruction to execute */
    opcode = MMU_readByte (mmu, cpu->registers[PC].value);
 
+   /*
+   printf ("PC = %x\n", cpu->registers[PC].value);
+   printf ("opcode = %x\n", opcode);
+   printf ("AF = %x\n", cpu->registers[AF].value);
+   printf ("BC = %x\n", cpu->registers[BC].value);
+   printf ("DE = %x\n", cpu->registers[DE].value);
+   printf ("HL = %x\n", cpu->registers[HL].value);
+   printf ("SP = %x\n", cpu->registers[SP].value);
+   printf ("top of stack = %x\n\n", MMU_readWord (mmu, cpu->registers[SP].value));
+   */
+
    /* Execute the instruction */
    if (opcode == 0xCB) {
       /* 0xCB prefixed instruction */
@@ -151,6 +164,7 @@ bool CPU_getIME (CPU cpu) {
 int CPU_executeInterrupt (CPU cpu, interrupt type) {
    MMU mmu;
    int cycles = 0;
+   byte IFRegister;
 
    mmu = GB_getMMU (cpu->gb);
 
@@ -164,24 +178,33 @@ int CPU_executeInterrupt (CPU cpu, interrupt type) {
    cpu->registers[SP].value -= 2;   
    MMU_writeWord (mmu, cpu->registers[SP].value, cpu->registers[PC].value);
 
+   IFRegister = MMU_readByte (mmu, 0xFF0F);
+
    /* Jump to starting address of interrupt */
    switch (type) {
       case INT_VBLANK:
          cpu->registers[PC].value = 0x40;
+         clearBit (&IFRegister, 0);
          break;
       case INT_LCDSTAT:
          cpu->registers[PC].value = 0x48;
+         clearBit (&IFRegister, 1);
          break;
       case INT_TIMER:
          cpu->registers[PC].value = 0x50;
+         clearBit (&IFRegister, 2);
          break;
       case INT_SERIAL:
          cpu->registers[PC].value = 0x58;
+         clearBit (&IFRegister, 3);
          break;
       case INT_JOYPAD:
          cpu->registers[PC].value = 0x60;
+         clearBit (&IFRegister, 4);
          break;
    }
+
+   MMU_writeByte (mmu, 0xFF0F, IFRegister);
 
    /* Cycles used by the push and the jump */
    cycles = 16+12;
@@ -426,7 +449,7 @@ void CPU_initInstructionMap () {
    instructionMap[0xB4] = &CPU_OR_A_H;
    instructionMap[0xB5] = &CPU_OR_A_L;
    instructionMap[0xB6] = &CPU_OR_A_aHL;
-   instructionMap[0xB6] = &CPU_OR_A_hash;
+   instructionMap[0xF6] = &CPU_OR_A_hash;
 
    instructionMap[0xAF] = &CPU_XOR_A_A;
    instructionMap[0xA8] = &CPU_XOR_A_B;

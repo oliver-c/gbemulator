@@ -82,7 +82,7 @@ void GB_run (GB gb) {
 
       GPU_update (gb->gpu, cyclesThisIteration);
       GB_handleTimers (gb, cyclesThisIteration);
-      cyclesSoFar += GB_handleInterrupts (gb);
+      cyclesSoFar += GB_handleInterrupts (gb); 
 
       GUI_update (gb->gui);
    }
@@ -131,6 +131,7 @@ void GB_runBootSequence (GB gb) {
    memory = MMU_getMemory (gb->mmu);
 
    /* Initialise values in memory */
+   memory[0xFF00] = 0xFF;
    memory[0xFF05] = 0x00;
    memory[0xFF06] = 0x00;
    memory[0xFF07] = 0x00;
