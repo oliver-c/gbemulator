@@ -258,10 +258,13 @@ void GPU_drawSprites (GPU gpu) {
                if (testBit (first, j)) colourIndex |= 1;
                if (testBit (second, j)) colourIndex |= 2;
 
-               if (testBit (sprite.flags, 4)) {
-                  pixels[framebufferIndex] = gpu->objPalette1[colourIndex];
-               } else {
-                  pixels[framebufferIndex] = gpu->objPalette0[colourIndex];
+               if (colourIndex != 0) {
+                  /* Colour index 0 is transparent */
+                  if (testBit (sprite.flags, 4)) {
+                     pixels[framebufferIndex] = gpu->objPalette1[colourIndex];
+                  } else {
+                     pixels[framebufferIndex] = gpu->objPalette0[colourIndex];
+                  }
                }
             }
          }
