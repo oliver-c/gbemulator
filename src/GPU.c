@@ -194,6 +194,7 @@ void GPU_drawBackground (GPU gpu) {
 }
 
 void GPU_drawSprites (GPU gpu) {
+   /* TODO: sprite flags */
    GUI gui;
    MMU mmu;
    byte lcdControl;

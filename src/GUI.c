@@ -12,6 +12,19 @@
 #include "types.h"
 #include "bitOperations.h"
 
+#define NUM_KEYS 8
+
+enum keys {
+   KEY_UP,
+   KEY_DOWN,
+   KEY_LEFT,
+   KEY_RIGHT,
+   KEY_A,
+   KEY_B,
+   KEY_START,
+   KEY_SELECT
+};
+
 struct GUI {
    GB gb;
    SDL_Surface *screen;
@@ -19,6 +32,7 @@ struct GUI {
    colour framebuffer[WINDOW_WIDTH * WINDOW_HEIGHT];
    Timer frameTimer;
    bool flippedThisFrame;
+   bool keyDown[NUM_KEYS];
    int frameCount;
 };
 
@@ -27,6 +41,7 @@ void GUI_handleEvents (GUI gui);
 void GUI_updateJoypad (GUI gui);
 
 GUI GUI_init (GB gb) {
+   int i;
    GUI newGUI = (GUI)malloc(sizeof(struct GUI));
    assert (newGUI != NULL);
 
@@ -34,6 +49,10 @@ GUI GUI_init (GB gb) {
    newGUI->flippedThisFrame = FALSE;
    newGUI->frameCount = 0;
    newGUI->frameTimer = Timer_init ();
+
+   for (i = 0; i < NUM_KEYS; i++) {
+      newGUI->keyDown[i] = FALSE;
+   }
 
    Timer_reset (newGUI->frameTimer);
    Timer_start (newGUI->frameTimer);
@@ -110,15 +129,54 @@ void GUI_initPalette (GUI gui) {
 
 void GUI_handleEvents (GUI gui) {
    SDL_Event event;
+   bool down;
 
    while (SDL_PollEvent (&event)) {
       if (event.type == SDL_QUIT) {
          GB_setRunning (gui->gb, FALSE);
+      } else if (event.type == SDL_KEYDOWN ||
+                 event.type == SDL_KEYUP) {
+
+         if (event.type == SDL_KEYDOWN) {
+            down = TRUE;
+         } else {
+            down = FALSE;
+         }
+
+         switch (event.key.keysym.sym) {
+            case SDLK_UP:
+               gui->keyDown[KEY_UP] = down;
+               break;
+            case SDLK_DOWN:
+               gui->keyDown[KEY_DOWN] = down;
+               break;
+            case SDLK_LEFT:
+               gui->keyDown[KEY_LEFT] = down;
+               break;
+            case SDLK_RIGHT:
+               gui->keyDown[KEY_RIGHT] = down;
+               break;
+            case SDLK_SLASH:
+               gui->keyDown[KEY_A] = down;
+               break;
+            case SDLK_PERIOD:
+               gui->keyDown[KEY_B] = down;
+               break;
+            case SDLK_RSHIFT:
+               gui->keyDown[KEY_SELECT] = down;
+               break;
+            case SDLK_RETURN:
+               gui->keyDown[KEY_START] = down;
+               break;
+            default:
+               break;
+         }
       }
    }
 }
 
 void GUI_updateJoypad (GUI gui) {
+   /* TODO: Interrupts */
    MMU mmu;
    byte joypad;
 
@@ -127,12 +185,23 @@ void GUI_updateJoypad (GUI gui) {
 
    setBit (&joypad, 7);
    setBit (&joypad, 6);
-
-   /* Temporary, no buttons pressed */
    setBit (&joypad, 3);
    setBit (&joypad, 2);
    setBit (&joypad, 1);
    setBit (&joypad, 0);
+
+   if (!testBit (joypad, 5)) {
+      if (gui->keyDown[KEY_A]) clearBit (&joypad, 0);
+      if (gui->keyDown[KEY_B]) clearBit (&joypad, 1);
+      if (gui->keyDown[KEY_SELECT]) clearBit (&joypad, 2);
+      if (gui->keyDown[KEY_START]) clearBit (&joypad, 3);
+   } else if (!testBit (joypad, 4)) {
+      if (gui->keyDown[KEY_RIGHT]) clearBit (&joypad, 0);
+      if (gui->keyDown[KEY_LEFT]) clearBit (&joypad, 1);
+      if (gui->keyDown[KEY_UP]) clearBit (&joypad, 2);
+      if (gui->keyDown[KEY_DOWN]) clearBit (&joypad, 3);
+   }
+
 
    MMU_writeByte (mmu, 0xFF00, joypad);
 }
