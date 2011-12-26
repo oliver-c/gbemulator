@@ -198,6 +198,8 @@ void CPU_8bitSWAP (CPU cpu, byte *dest) {
    byte upperNibble;
    byte lowerNibble;
 
+   CPU_clearFlags (cpu);
+
    upperNibble = (*dest & 0xF0) >> 4;
    lowerNibble = *dest & 0x0F;
 
@@ -420,7 +422,7 @@ int CPU_LD_A_ann (CPU cpu) {
    return 16;
 }
 
-int CPU_LD_A_hash (CPU cpu) {
+int CPU_LD_A_n (CPU cpu) {
    /* ... */
    MMU mmu = GB_getMMU (cpu->gb);
    REG_A = MMU_readByte (mmu, REG_PC+1);
@@ -718,56 +720,56 @@ int CPU_LD_L_aHL (CPU cpu) {
    return 8;
 }
 
-int CPU_aHL_A (CPU cpu) {
+int CPU_LD_aHL_A (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    MMU_writeByte (mmu, REG_HL, REG_A);
    REG_PC++;
    return 8;
 }
 
-int CPU_aHL_B (CPU cpu) {
+int CPU_LD_aHL_B (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    MMU_writeByte (mmu, REG_HL, REG_B);
    REG_PC++;
    return 8;
 }
 
-int CPU_aHL_C (CPU cpu) {
+int CPU_LD_aHL_C (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    MMU_writeByte (mmu, REG_HL, REG_C);
    REG_PC++;
    return 8;
 }
 
-int CPU_aHL_D (CPU cpu) {
+int CPU_LD_aHL_D (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    MMU_writeByte (mmu, REG_HL, REG_D);
    REG_PC++;
    return 8;
 }
 
-int CPU_aHL_E (CPU cpu) {
+int CPU_LD_aHL_E (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    MMU_writeByte (mmu, REG_HL, REG_E);
    REG_PC++;
    return 8;
 }
 
-int CPU_aHL_H (CPU cpu) {
+int CPU_LD_aHL_H (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    MMU_writeByte (mmu, REG_HL, REG_H);
    REG_PC++;
    return 8;
 }
 
-int CPU_aHL_L (CPU cpu) {
+int CPU_LD_aHL_L (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    MMU_writeByte (mmu, REG_HL, REG_L);
    REG_PC++;
    return 8;
 }
 
-int CPU_aHL_n (CPU cpu) {
+int CPU_LD_aHL_n (CPU cpu) {
    byte byteToWrite;
    MMU mmu = GB_getMMU (cpu->gb);
 
@@ -778,21 +780,21 @@ int CPU_aHL_n (CPU cpu) {
    return 12;
 }
 
-int CPU_aBC_A (CPU cpu) {
+int CPU_LD_aBC_A (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    MMU_writeByte (mmu, REG_BC, REG_A);
    REG_PC++;
    return 8;
 }
 
-int CPU_aDE_A (CPU cpu) {
+int CPU_LD_aDE_A (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    MMU_writeByte (mmu, REG_DE, REG_A);
    REG_PC++;
    return 8;
 }
 
-int CPU_ann_A (CPU cpu) {
+int CPU_LD_ann_A (CPU cpu) {
    word location;
    MMU mmu = GB_getMMU (cpu->gb);
 
@@ -1049,7 +1051,7 @@ int CPU_ADD_A_aHL (CPU cpu) {
    return 8;
 }
 
-int CPU_ADD_A_hash (CPU cpu) {
+int CPU_ADD_A_n (CPU cpu) {
    MMU mmu = GB_getMMU (cpu->gb);
    REG_A += MMU_readByte (mmu, REG_PC+1);
    REG_PC += 2;
@@ -1109,7 +1111,7 @@ int CPU_ADC_A_aHL (CPU cpu) {
    return 8;
 }
 
-int CPU_ADC_A_hash (CPU cpu) {
+int CPU_ADC_A_n (CPU cpu) {
    byte byteToAdd;
    MMU mmu = GB_getMMU (cpu->gb);
 
@@ -1173,7 +1175,7 @@ int CPU_SUB_A_aHL (CPU cpu) {
    return 8;
 }
 
-int CPU_SUB_A_hash (CPU cpu) {
+int CPU_SUB_A_n (CPU cpu) {
    byte byteToSub;
    MMU mmu = GB_getMMU (cpu->gb);
    
@@ -1290,7 +1292,7 @@ int CPU_AND_A_aHL (CPU cpu) {
    return 8;
 }
 
-int CPU_AND_A_hash (CPU cpu) {
+int CPU_AND_A_n (CPU cpu) {
    byte byteToAnd;
    MMU mmu = GB_getMMU (cpu->gb);
    
@@ -1354,7 +1356,7 @@ int CPU_OR_A_aHL (CPU cpu) {
    return 8;
 }
 
-int CPU_OR_A_hash (CPU cpu) {
+int CPU_OR_A_n (CPU cpu) {
    byte byteToOr;
    MMU mmu = GB_getMMU (cpu->gb);
    
@@ -1418,7 +1420,7 @@ int CPU_XOR_A_aHL (CPU cpu) {
    return 8;
 }
 
-int CPU_XOR_A_hash (CPU cpu) {
+int CPU_XOR_A_n (CPU cpu) {
    byte byteToXor;
    MMU mmu = GB_getMMU (cpu->gb);
    
@@ -1482,7 +1484,7 @@ int CPU_CP_A_aHL (CPU cpu) {
    return 8;
 }
 
-int CPU_CP_A_hash (CPU cpu) {
+int CPU_CP_A_n (CPU cpu) {
    byte byteToCp;
    MMU mmu = GB_getMMU (cpu->gb);
    
@@ -1696,7 +1698,10 @@ int CPU_DEC_SP (CPU cpu) {
 
 int CPU_DAA (CPU cpu) {
    /* TODO */
+   CPU_clearZero (cpu);
    CPU_clearHalfCarry (cpu);
+
+   if (REG_A == 0) CPU_setZero (cpu);
 
    REG_PC++;
    return 4;

@@ -231,13 +231,14 @@ void GPU_drawSprites (GPU gpu) {
       }
 
       for (i = 0; i < NUM_SPRITES; i++) {
-         memcpy (&sprite, memory+(i*sizeof(spriteAttribute)), sizeof(spriteAttribute));
+         memcpy (&sprite, memory+currentAddress, sizeof(spriteAttribute));
          sprite.yPos -= 16;
          sprite.xPos -= 8;
 
          if (sprite.yPos <= currentLine && (sprite.yPos + spriteHeight) > currentLine && 
              sprite.xPos >= 0 && sprite.xPos < WINDOW_WIDTH) {
             /* If this sprite is visible and is part of the current scanline */
+
             tileVerticalOffset = currentLine % spriteHeight; 
             tileDataAddress = 0x8000 + (TILE_SIZE_BYTES*(spriteHeight/8)*(sprite.tileNumber));
 
