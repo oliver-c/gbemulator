@@ -98,7 +98,7 @@ void CPU_8bitSBC (CPU cpu, byte *dest, byte *toSub) {
    int result; 
    int C = 0;
 
-   if (CPU_isCarrySet (cpu)) C = 1;
+   if (!CPU_isCarrySet (cpu)) C = 1;
 
    CPU_clearFlags (cpu);
    CPU_setSub (cpu);
