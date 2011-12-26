@@ -1746,7 +1746,7 @@ int CPU_HALT (CPU cpu) {
 }
 
 int CPU_STOP (CPU cpu) {
-   REG_PC += 2;
+   REG_PC++;
    return 4;
 }
 
