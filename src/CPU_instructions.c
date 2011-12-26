@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "GB.h"
 #include "MMU.h"
 #include "CPU.h"
@@ -1741,11 +1743,13 @@ int CPU_SCF (CPU cpu) {
 }
 
 int CPU_HALT (CPU cpu) {
+   fprintf (stderr, "Warning: HALT instruction not implemented\n");
    REG_PC++;
    return 4;
 }
 
 int CPU_STOP (CPU cpu) {
+   fprintf (stderr, "Warning: STOP instruction not implemented\n");
    REG_PC++;
    return 4;
 }

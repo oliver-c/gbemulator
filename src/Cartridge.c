@@ -83,6 +83,10 @@ void Cartridge_load (Cartridge cartridge, const char *location) {
          default:
             break;
       }
+
+      if (cartridge->mbcType != MBC_NONE) {
+         fprintf (stderr, "Warning: MBC%d not implemented\n", cartridge->mbcType);
+      }
    
       /* Cartridge has been loaded */
       cartridge->loaded = TRUE;
