@@ -4,6 +4,7 @@
 #include <SDL.h>
 
 #include "GB.h"
+#include "CPU.h"
 #include "GUI.h"
 #include "GPU.h"
 #include "MMU.h"
@@ -145,27 +146,35 @@ void GUI_handleEvents (GUI gui) {
 
          switch (event.key.keysym.sym) {
             case SDLK_UP:
+               if (down && !gui->keyDown[KEY_UP]) GB_requestInterrupt (gui->gb, INT_JOYPAD);
                gui->keyDown[KEY_UP] = down;
                break;
             case SDLK_DOWN:
+               if (down && !gui->keyDown[KEY_DOWN]) GB_requestInterrupt (gui->gb, INT_JOYPAD);
                gui->keyDown[KEY_DOWN] = down;
                break;
             case SDLK_LEFT:
+               if (down && !gui->keyDown[KEY_LEFT]) GB_requestInterrupt (gui->gb, INT_JOYPAD);
                gui->keyDown[KEY_LEFT] = down;
                break;
             case SDLK_RIGHT:
+               if (down && !gui->keyDown[KEY_RIGHT]) GB_requestInterrupt (gui->gb, INT_JOYPAD);
                gui->keyDown[KEY_RIGHT] = down;
                break;
             case SDLK_SLASH:
+               if (down && !gui->keyDown[KEY_A]) GB_requestInterrupt (gui->gb, INT_JOYPAD);
                gui->keyDown[KEY_A] = down;
                break;
             case SDLK_PERIOD:
+               if (down && !gui->keyDown[KEY_B]) GB_requestInterrupt (gui->gb, INT_JOYPAD);
                gui->keyDown[KEY_B] = down;
                break;
             case SDLK_RSHIFT:
+               if (down && !gui->keyDown[KEY_SELECT]) GB_requestInterrupt (gui->gb, INT_JOYPAD);
                gui->keyDown[KEY_SELECT] = down;
                break;
             case SDLK_RETURN:
+               if (down && !gui->keyDown[KEY_START]) GB_requestInterrupt (gui->gb, INT_JOYPAD);
                gui->keyDown[KEY_START] = down;
                break;
             default:
@@ -176,7 +185,6 @@ void GUI_handleEvents (GUI gui) {
 }
 
 void GUI_updateJoypad (GUI gui) {
-   /* TODO: Interrupts */
    MMU mmu;
    byte joypad;
 
