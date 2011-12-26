@@ -74,7 +74,7 @@ void MMU_writeByte (MMU mmu, int location, byte byteToWrite) {
    } else if (location == 0xFF44) {
       /* Writing to the scanline register, which resets it to zero */
       mmu->memory[location] = 0;
-   } else if (location == 0xFF06) {
+   } else if (location == 0xFF46) {
       /* DMA transfer */
       address = byteToWrite * 0x100;      
       for (i = 0; i <= 0x9F; i++) {
