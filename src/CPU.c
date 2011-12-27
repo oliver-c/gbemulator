@@ -127,6 +127,8 @@ int CPU_step (CPU cpu) {
    /* Fetch the opcode for the next instruction to execute */
    opcode = MMU_readByte (mmu, cpu->registers[PC].value);
 
+   // printf ("%x %x\n", cpu->registers[PC].value, opcode);
+
    /*
    printf ("PC = %x\n", cpu->registers[PC].value);
    printf ("opcode = %x\n", opcode);
