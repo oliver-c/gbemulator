@@ -125,7 +125,7 @@ void GPU_drawBackground (GPU gpu) {
    int currentLine;
    int verticalTileIndex, horizontalTileIndex;
    int scrollX, scrollY;
-   int tileMapLocation;
+   int tileIndexLocation;
    byte tileIndex;
    int tileVerticalOffset, tileHorizontalOffset;
    int framebufferIndex;
@@ -153,19 +153,21 @@ void GPU_drawBackground (GPU gpu) {
       tileVerticalOffset = currentLine % BG_TILE_HEIGHT;
       tileHorizontalOffset = scrollX % BG_TILE_WIDTH;
 
-      assert (verticalTileIndex >= 0 && verticalTileIndex < BG_NUM_VERTICAL_TILES);
+      /* Wrap back to the top*/
+      if (verticalTileIndex >= BG_NUM_VERTICAL_TILES) verticalTileIndex -= BG_NUM_VERTICAL_TILES;
+
       currentBit = tileHorizontalOffset;
 
       /* Get tile map location */
       if (!testBit (lcdControl, 3)) {
          /* Map data from 9800-9BFF */
-         tileMapLocation = 0x9800+verticalTileIndex*BG_NUM_HORIZONTAL_TILES+horizontalTileIndex;
+         tileIndexLocation = 0x9800+verticalTileIndex*BG_NUM_HORIZONTAL_TILES+horizontalTileIndex;
       } else {
          /* Map data from 9C00-9FFF */
-         tileMapLocation = 0x9C00+verticalTileIndex*BG_NUM_HORIZONTAL_TILES+horizontalTileIndex;
+         tileIndexLocation = 0x9C00+verticalTileIndex*BG_NUM_HORIZONTAL_TILES+horizontalTileIndex;
       }
 
-      tileIndex = MMU_readByte (mmu, tileMapLocation);
+      tileIndex = MMU_readByte (mmu, tileIndexLocation);
       
       /* Get tile information */
       tileDataAddress = getTileDataAddress (lcdControl, tileIndex);
@@ -189,8 +191,14 @@ void GPU_drawBackground (GPU gpu) {
          if (currentBit >= 8) {
             /* Move onto the next tile */
             currentBit = 0;
-            tileMapLocation++;
-            tileIndex = MMU_readByte (mmu, tileMapLocation);
+            tileIndexLocation++;
+
+            /* Wrap back to the left */
+            if (tileIndexLocation % BG_NUM_HORIZONTAL_TILES == 0) {
+               tileIndexLocation -= BG_NUM_HORIZONTAL_TILES;
+            }
+
+            tileIndex = MMU_readByte (mmu, tileIndexLocation);
 
             tileDataAddress = getTileDataAddress (lcdControl, tileIndex);
 
