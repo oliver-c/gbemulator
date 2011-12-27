@@ -41,6 +41,8 @@ void GPU_drawSprites (GPU gpu);
 
 void GPU_getPalette (GPU gpu, int type);
 
+int getTileDataAddress (int lcdControl, int tileIndex);
+
 /* Updates the LCD status register, also requests interrupts
    if necessary */
 void GPU_updateLCDStatus (GPU gpu);
@@ -125,7 +127,6 @@ void GPU_drawBackground (GPU gpu) {
    int scrollX, scrollY;
    int tileMapLocation;
    byte tileIndex;
-   signed_byte signedTileIndex;
    int tileVerticalOffset, tileHorizontalOffset;
    int framebufferIndex;
    int tileDataAddress;
@@ -167,23 +168,15 @@ void GPU_drawBackground (GPU gpu) {
       tileIndex = MMU_readByte (mmu, tileMapLocation);
       
       /* Get tile information */
-      if (!testBit (lcdControl, 4)) {
-         /* Tile data from 8800-97FF */
-         signedTileIndex = (signed_byte)tileIndex;
-         tileDataAddress = 0x8800 + (TILE_SIZE_BYTES * (signedTileIndex + 128));     
-         assert (tileDataAddress <= 0x97FF);
-      } else {
-         /* Tile data from 8000-8FFF */
-         tileDataAddress = 0x8000 + (TILE_SIZE_BYTES * tileIndex);     
-         assert (tileDataAddress <= 0x8FFF);
-      }
+      tileDataAddress = getTileDataAddress (lcdControl, tileIndex);
+
+      /* Read the bytes that contain the pixel data */
+      first = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset);
+      second = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset + 1);
+      
+      framebufferIndex = currentLine*WINDOW_WIDTH;
 
       for (i = 0; i < WINDOW_WIDTH; i++) {
-         /* Read the bytes that contain the pixel data */
-         first = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset);
-         second = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset + 1);
-         
-         framebufferIndex = currentLine*WINDOW_WIDTH + i;
          assert (framebufferIndex < (WINDOW_WIDTH*WINDOW_HEIGHT));
 
          colourIndex = 0;
@@ -191,27 +184,21 @@ void GPU_drawBackground (GPU gpu) {
          if (testBit (second, 7-currentBit)) colourIndex |= 2;
 
          pixels[framebufferIndex] = gpu->bgPalette[colourIndex];
-
          currentBit++;
+
          if (currentBit >= 8) {
             /* Move onto the next tile */
             currentBit = 0;
             tileMapLocation++;
-
             tileIndex = MMU_readByte (mmu, tileMapLocation);
 
-            if (!testBit (lcdControl, 4)) {
-               /* Tile data from 8800-97FF */
-               signedTileIndex = (signed_byte)tileIndex;
-               tileDataAddress = 0x8800 + (TILE_SIZE_BYTES * (signedTileIndex + 128));     
-               assert (tileDataAddress <= 0x97FF);
-            } else {
-               /* Tile data from 8000-8FFF */
-               tileDataAddress = 0x8000 + (TILE_SIZE_BYTES * tileIndex);     
-               assert (tileDataAddress <= 0x8FFF);
-            }
+            tileDataAddress = getTileDataAddress (lcdControl, tileIndex);
+
+            first = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset);
+            second = MMU_readByte (mmu, tileDataAddress + 2*tileVerticalOffset + 1);
          }
 
+         framebufferIndex++;
       }
    } else {
       /* Background is white */ 
@@ -354,6 +341,24 @@ void GPU_getPalette (GPU gpu, int type) {
             break;
       }
    }
+}
+
+int getTileDataAddress (int lcdControl, int tileIndex) {
+   int tileDataAddress;
+   signed_byte signedTileIndex;
+
+   if (!testBit (lcdControl, 4)) {
+      /* Tile data from 8800-97FF */
+      signedTileIndex = (signed_byte)tileIndex;
+      tileDataAddress = 0x8800 + (TILE_SIZE_BYTES * (signedTileIndex + 128));     
+      assert (tileDataAddress <= 0x97FF);
+   } else {
+      /* Tile data from 8000-8FFF */
+      tileDataAddress = 0x8000 + (TILE_SIZE_BYTES * tileIndex);     
+      assert (tileDataAddress <= 0x8FFF);
+   }
+
+   return tileDataAddress;
 }
 
 void GPU_updateLCDStatus (GPU gpu) {
