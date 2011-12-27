@@ -23,4 +23,7 @@ void Cartridge_load (Cartridge cartridge, const char *location);
 /* Get cartridge data at a specified bank number */
 byte * Cartridge_getData (Cartridge cartridge, int bankNumber);
 
+/* Get the memory bank controller type */
+MBC Cartridge_getMBCType (Cartridge cartridge);
+
 #endif

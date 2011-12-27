@@ -14,8 +14,13 @@ struct MMU {
    /* Mapped memory */
    byte memory[MAPPED_MEM_SIZE];
 
-   /* The current switchable ROM bank number */
+   byte RAMBanks[0x8000];
+
+   /* The current switchable ROM and RAM bank numbers */
    int currentROMBank;
+   int currentRAMBank;
+   bool externalRAMEnabled;
+   int ROMRAMMode;
 };
 
 MMU MMU_init (GB gb) {
@@ -24,6 +29,9 @@ MMU MMU_init (GB gb) {
 
    newMMU->gb = gb;
    newMMU->currentROMBank = 1;
+   newMMU->currentRAMBank = 0;
+   newMMU->externalRAMEnabled = FALSE;
+   newMMU->ROMRAMMode = 0;
 
    return newMMU;
 }
@@ -48,6 +56,8 @@ byte MMU_readByte (MMU mmu, int location) {
       bankData = Cartridge_getData (cartridge, mmu->currentROMBank);
 
       value = bankData[location-0x4000];
+   } else if (location >= 0xA000 && location <= 0xBFFF) {
+      value = mmu->RAMBanks[(0x2000 * mmu->currentRAMBank) + (location-0xA000)];
    } else {
       value = mmu->memory[location];
    }
@@ -56,9 +66,40 @@ byte MMU_readByte (MMU mmu, int location) {
 }
 
 void MMU_writeByte (MMU mmu, int location, byte byteToWrite) {
+   Cartridge cartridge;
    int i, address;
 
-   if (location >= 0xC000 && location <= 0xDE00) {
+   cartridge = GB_getCartridge (mmu->gb);
+   
+   if (location >= 0x0000 && location <= 0x1FFF) {
+      /* External RAM enable */ 
+      if ((byteToWrite & 0x0F) == 0x0A) {
+         mmu->externalRAMEnabled = TRUE;
+      } else {
+         mmu->externalRAMEnabled = FALSE;
+      }
+   } else if (location >= 0x2000 && location <= 0x3FFF) {
+      /* ROM Bank number change */
+      if (byteToWrite == 0) {
+         mmu->currentROMBank = 1; 
+      } else {
+         mmu->currentROMBank = byteToWrite;
+      }
+   } else if (location >= 0x4000 && location <= 0x5FFF) {
+      /* RAM Bank number change */
+     assert (byteToWrite <= 3);
+     if (mmu->ROMRAMMode) {
+        mmu->currentRAMBank = byteToWrite;
+     } else {
+        mmu->currentROMBank |= (byteToWrite << 5);
+     }
+   } else if (location >= 0x6000 && location <= 0x7FFF) {
+      /* ROM/RAM Mode select */
+      assert (byteToWrite == 0 || byteToWrite == 1);
+      mmu->ROMRAMMode = byteToWrite;
+   } else if (location >= 0xA000 && location <= 0xBFFF) {
+      mmu->RAMBanks[(0x2000 * mmu->currentRAMBank) + (location-0xA000)] = byteToWrite;
+   } else if (location >= 0xC000 && location <= 0xDE00) {
       /* Echo of RAM */
       mmu->memory[location] = byteToWrite;
       mmu->memory[location+0x2000] = byteToWrite;

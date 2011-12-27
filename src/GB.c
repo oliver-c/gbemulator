@@ -235,7 +235,7 @@ void GB_handleTimers (GB gb, int cycles) {
    if (testBit (timerControl, 2)) {
       /* If the timer is enabled */
       timerCounter += cycles;
-      frequencyIndex = ((timerControl & 2) << 1) | (timerControl & 1);
+      frequencyIndex = ((timerControl & 1) << 1) | (timerControl & 0);
 
       while (timerCounter >= (CLOCK_SPEED/timerFrequencies[frequencyIndex])) {
          timer++;

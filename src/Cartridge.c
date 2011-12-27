@@ -102,3 +102,8 @@ byte * Cartridge_getData (Cartridge cartridge, int bankNumber) {
    assert (cartridge->loaded);
    return (cartridge->data + bankNumber * ROM_BANK_SIZE); 
 }
+
+MBC Cartridge_getMBCType (Cartridge cartridge) {
+   assert (cartridge->loaded);
+   return cartridge->mbcType;
+}
