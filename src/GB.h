@@ -23,6 +23,8 @@ void GB_run (GB gb);
 void GB_setRunning (GB gb, bool running);
 void GB_requestInterrupt (GB gb, int interrupt);
 
+void GB_halt (GB gb);
+
 CPU GB_getCPU (GB gb);
 MMU GB_getMMU (GB gb);
 Cartridge GB_getCartridge (GB gb);

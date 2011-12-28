@@ -14,6 +14,7 @@
 
 struct GB {
    bool isRunning;
+   bool isHalted;
 
    CPU cpu;
    MMU mmu;
@@ -44,6 +45,7 @@ GB GB_init () {
    newGB->gui = GUI_init (newGB);
 
    newGB->isRunning = FALSE;
+   newGB->isRunning = FALSE;
    GB_runBootSequence (newGB);
 
    return newGB;
@@ -72,17 +74,23 @@ void GB_run (GB gb) {
    gb->isRunning = TRUE;
 
    while (gb->isRunning) {
-      cyclesThisIteration = CPU_step (gb->cpu);
-      cyclesSoFar += cyclesThisIteration;
+      if (!gb->isHalted) {
+         cyclesThisIteration = CPU_step (gb->cpu);
+         cyclesSoFar += cyclesThisIteration;
+      } else {
+         /* CPU is halted, execute NOPs */
+         cyclesThisIteration = 4;
+         cyclesSoFar += cyclesThisIteration;
+      }
 
       if (cyclesSoFar >= CLOCK_SPEED) {
          /* delay */
          cyclesSoFar = 0;
       }
 
+      cyclesSoFar += GB_handleInterrupts (gb); 
       GPU_update (gb->gpu, cyclesThisIteration);
       GB_handleTimers (gb, cyclesThisIteration);
-      cyclesSoFar += GB_handleInterrupts (gb); 
 
       GUI_update (gb->gui);
    }
@@ -99,6 +107,10 @@ void GB_requestInterrupt (GB gb, int interrupt) {
    IFRegister = MMU_readByte (gb->mmu, 0xFF0F);
    setBit (&IFRegister, interrupt);
    MMU_writeByte (gb->mmu, 0xFF0F, IFRegister);
+}
+
+void GB_halt (GB gb) {
+   gb->isHalted = TRUE;
 }
 
 CPU GB_getCPU (GB gb) {
@@ -180,18 +192,23 @@ int GB_handleInterrupts (GB gb) {
    if (CPU_getIME(gb->cpu)) {
       if ((IERegister & 1) && (IFRegister & 1)) {
          /* V-Blank */
+         gb->isHalted = FALSE;
          cycles = CPU_executeInterrupt (gb->cpu, INT_VBLANK);
       } else if ((IERegister & 2) && (IFRegister & 2)) {
          /* LCD STAT */
+         gb->isHalted = FALSE;
          cycles = CPU_executeInterrupt (gb->cpu, INT_LCDSTAT);
       } else if ((IERegister & 4) && (IFRegister & 4)) {
          /* Timer */
+         gb->isHalted = FALSE;
          cycles = CPU_executeInterrupt (gb->cpu, INT_TIMER);
       } else if ((IERegister & 8) && (IFRegister & 8)) {
          /* Serial */
+         gb->isHalted = FALSE;
          cycles = CPU_executeInterrupt (gb->cpu, INT_SERIAL);
       } else if ((IERegister & 16) && (IFRegister & 16)) {
          /* Joypad */
+         gb->isHalted = FALSE;
          cycles = CPU_executeInterrupt (gb->cpu, INT_JOYPAD);
       }
    }

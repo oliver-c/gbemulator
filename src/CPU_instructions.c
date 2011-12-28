@@ -1743,7 +1743,7 @@ int CPU_SCF (CPU cpu) {
 }
 
 int CPU_HALT (CPU cpu) {
-   fprintf (stderr, "Warning: HALT instruction not implemented\n");
+   GB_halt (cpu->gb);
    REG_PC++;
    return 4;
 }
