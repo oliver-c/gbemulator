@@ -425,7 +425,6 @@ int CPU_LD_A_ann (CPU cpu) {
 }
 
 int CPU_LD_A_n (CPU cpu) {
-   /* ... */
    MMU mmu = GB_getMMU (cpu->gb);
    REG_A = MMU_readByte (mmu, REG_PC+1);
    REG_PC += 2;
@@ -919,7 +918,11 @@ int CPU_LDHL_SP_n (CPU cpu) {
    
    CPU_clearFlags (cpu);
    if (result < 0 || result > 0xFFFF) CPU_setCarry (cpu);
-   CPU_8bitUpdateHalfCarry (cpu, REG_SP, REG_SP+immediate, ADD);
+   if (immediate >= 0) {
+      CPU_16bitUpdateHalfCarry (cpu, REG_SP, REG_SP+immediate, ADD);
+   } else {
+      CPU_16bitUpdateHalfCarry (cpu, REG_SP, REG_SP+immediate, SUB);
+   }
 
    REG_HL = REG_SP+immediate;
    REG_PC += 2;

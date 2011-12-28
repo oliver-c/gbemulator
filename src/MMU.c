@@ -107,8 +107,6 @@ void MMU_writeByte (MMU mmu, int location, byte byteToWrite) {
       /* Echo of RAM */
       mmu->memory[location] = byteToWrite;
       mmu->memory[location-0x2000] = byteToWrite;
-   } else if (location >= 0x2000 && location <= 0x3FFF) {
-      /* Change bank number */
    } else if (location == 0xFF04) {
       /* Writing to the divider register, which resets it to zero */
       mmu->memory[location]= 0;
