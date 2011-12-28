@@ -432,6 +432,7 @@ void CPU_initInstructionMap () {
    instructionMap[0x9C] = &CPU_SBC_A_H;
    instructionMap[0x9D] = &CPU_SBC_A_L;
    instructionMap[0x9E] = &CPU_SBC_A_aHL;
+   instructionMap[0xDE] = &CPU_SBC_A_n;
 
    instructionMap[0xA7] = &CPU_AND_A_A;
    instructionMap[0xA0] = &CPU_AND_A_B;

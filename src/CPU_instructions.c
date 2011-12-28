@@ -1241,6 +1241,17 @@ int CPU_SBC_A_aHL (CPU cpu) {
    return 8;
 }
 
+int CPU_SBC_A_n (CPU cpu) {
+   byte byteToSub;
+   MMU mmu = GB_getMMU (cpu->gb);
+   
+   byteToSub = MMU_readByte (mmu, REG_PC+1);
+   CPU_8bitSBC (cpu, &REG_A, &byteToSub);
+   
+   REG_PC += 2;
+   return 8;
+}
+
 int CPU_AND_A_A (CPU cpu) {
    CPU_8bitAND (cpu, &REG_A, &REG_A);
    REG_PC++;
