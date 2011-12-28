@@ -160,7 +160,7 @@ void CPU_8bitINC (CPU cpu, byte *dest) {
    CPU_clearHalfCarry (cpu);
    result = (int)*dest + 1;
 
-   if (result == 0) CPU_setZero (cpu);
+   if ((result & 0xFF) == 0) CPU_setZero (cpu);
    CPU_8bitUpdateHalfCarry (cpu, *dest, result, ADD);
 
    (*dest)++;
