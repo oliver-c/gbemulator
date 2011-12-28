@@ -58,7 +58,7 @@ void CPU_8bitADD (CPU cpu, byte *dest, byte *toAdd) {
    result = (int)*dest + (int)*toAdd;
 
    CPU_clearFlags (cpu);
-   if (result == 0) CPU_setZero (cpu);
+   if ((result & 0xFF) == 0) CPU_setZero (cpu);
    if (result < 0 || result > 0xFF) CPU_setCarry (cpu);
    CPU_8bitUpdateHalfCarry (cpu, *dest, result, ADD);
 
@@ -67,14 +67,14 @@ void CPU_8bitADD (CPU cpu, byte *dest, byte *toAdd) {
 
 void CPU_8bitADC (CPU cpu, byte *dest, byte *toAdd) {
    int result;
-   int C = 0;
+   byte C = 0;
    
    if (CPU_isCarrySet (cpu)) C = 1;
 
    result = (int)*dest + (int)*toAdd + C;
 
    CPU_clearFlags (cpu);
-   if (result == 0) CPU_setZero (cpu);
+   if ((result & 0xFF) == 0) CPU_setZero (cpu);
    if (result < 0 || result > 0xFF) CPU_setCarry (cpu);
    CPU_8bitUpdateHalfCarry (cpu, *dest, result, ADD);
 
@@ -1054,8 +1054,11 @@ int CPU_ADD_A_aHL (CPU cpu) {
 }
 
 int CPU_ADD_A_n (CPU cpu) {
+   byte byteToAdd;
    MMU mmu = GB_getMMU (cpu->gb);
-   REG_A += MMU_readByte (mmu, REG_PC+1);
+
+   byteToAdd = MMU_readByte (mmu, REG_PC+1);
+   CPU_8bitADD (cpu, &REG_A, &byteToAdd);
    REG_PC += 2;
    return 8;
 }
@@ -1119,7 +1122,6 @@ int CPU_ADC_A_n (CPU cpu) {
 
    byteToAdd = MMU_readByte (mmu, REG_PC+1);
    CPU_8bitADC (cpu, &REG_A, &byteToAdd);
-
    REG_PC += 2;
    return 8;
 }
