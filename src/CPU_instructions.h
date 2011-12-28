@@ -160,6 +160,7 @@ int CPU_SBC_A_E (CPU cpu);
 int CPU_SBC_A_H (CPU cpu);
 int CPU_SBC_A_L (CPU cpu);
 int CPU_SBC_A_aHL (CPU cpu);
+int CPU_SBC_A_n (CPU cpu);
 
 int CPU_AND_A_A (CPU cpu);
 int CPU_AND_A_B (CPU cpu);
